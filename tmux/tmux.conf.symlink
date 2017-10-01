@@ -1,4 +1,4 @@
-set -g default-command "login-shell"
+set -g default-command "$SHELL"
 
 # tmux display things in 256 colors
 set -g default-terminal "tmux-256color-italic"
@@ -25,7 +25,7 @@ set -g visual-activity off
 
 # Rather than constraining window size to the maximum size of any client
 # connected to the *session*, constrain window size to the maximum size of any
-# client connected to *that window*. Much more reasonable.
+# client connected to *that window*. Much more reasoable.
 setw -g aggressive-resize on
 
 # make delay shorter
@@ -87,15 +87,19 @@ setw -g mouse on
 setw -g mode-keys vi
 # more settings to make copy-mode more vim-like
 unbind [
-bind Escape copy-mode
 unbind p
+bind Escape copy-mode
 bind p paste-buffer
-bind -Tcopy-mode-vi 'v' send -X begin-selection
-bind -Tcopy-mode-vi 'y' send -X copy-pipe-and-cancel "tmux save-buffer - | reattach-to-user-namespace pbcopy"
+bind -t vi-copy v begin-selection
+#bind -t vi-copy y copy-selection
+bind -t vi-copy y copy-pipe "xclip -sel clip -i"
+bind -t vi-copy Escape cancel
+
+#bind -t vi-copy C-c copy-pipe "xclip -sel clip -i"
 
 # Buffers to/from Mac clipboard, yay tmux book from pragprog
-bind C-c run "tmux save-buffer - | reattach-to-user-namespace pbcopy"
-bind C-v run "tmux set-buffer $(reattach-to-user-namespace pbpaste); tmux paste-buffer"
+#bind C-c run "tmux save-buffer - | reattach-to-user-namespace pbcopy"
+#bind C-v run "tmux set-buffer $(reattach-to-user-namespace pbpaste); tmux paste-buffer"
 
 ##############################
 ### Color & Style Settings ###

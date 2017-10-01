@@ -5,6 +5,8 @@ tm_color_inactive=colour241
 tm_color_feature=colour206
 tm_color_music=colour215
 tm_active_border_color=colour240
+tm_color_user=colour14
+tm_color_at_sym=white
 
 # separators
 tm_separator_left_bold="◀"
@@ -54,6 +56,8 @@ tm_battery="#(~/.dotfiles/bin/battery_indicator.sh)"
 tm_date="#[fg=$tm_color_inactive] %R %d %b"
 tm_host="#[fg=$tm_color_feature,bold]#h"
 tm_session_name="#[fg=$tm_color_feature,bold]#S"
+tm_user="#[fg=$tm_color_user,bold]#(echo $USER)"
+tm_at_sym="#[fg=$tm_color_at_sym]@"
 
 set -g status-left $tm_session_name' '
-set -g status-right $tm_tunes' '$tm_date' '$tm_host
+set -g status-right $tm_tunes' '$tm_date' '$tm_user' '$tm_at_sym' '$tm_host
