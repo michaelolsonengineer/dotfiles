@@ -5,7 +5,6 @@ command_exists() {
     type "$1" > /dev/null 2>&1
 }
 
-
 # display how long all tasks over 10 seconds take
 export REPORTTIME=10
 
@@ -20,10 +19,14 @@ fi
 # source all .zsh files inside of the zsh/ directory
 for config ($ZSH/**/*.zsh) source $config
 
+
+if [[ -a ~/.personalrc ]]; then
+    source ~/.personalrc
+fi
+
 if [[ -a ~/.localrc ]]; then
     source ~/.localrc
 fi
-
 
 # initialize autocomplete
 autoload -U compinit add-zsh-hook
@@ -31,27 +34,18 @@ compinit
 
 for config ($ZSH/**/*completion.sh) source $config
 
-export EDITOR='nvim'
-export GIT_EDITOR='nvim'
-
-export PATH=/usr/local/bin:$PATH
-
-# add /usr/local/sbin
-if [[ -d /usr/local/sbin ]]; then
-    export PATH=/usr/local/sbin:$PATH
-fi
-
-# adding path directory for custom scripts
-export PATH=$DOTFILES/bin:$PATH
-
-# check for custom bin directory and add to path
-if [[ -d ~/bin ]]; then
-    export PATH=~/bin:$PATH
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+  export GIT_EDITOR='vim'
+else
+  export EDITOR='vim'
+  export GIT_EDITOR='vim'
 fi
 
 [ -z "$TMUX" ] && export TERM=xterm-256color-italic
 
-# install rbenv
+# add ruby environment if installed
 if command_exists rbenv; then
     eval "$(rbenv init -)"
 fi
@@ -83,3 +77,118 @@ fi
 # Base16 shell setup
 BASE16_SHELL=$HOME/.config/base16-shell/
 [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+export LANG=en_US
+export LC_ALL=C
+export LC_CTYPE=C
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+if [ -f ~/.aliases.sh ]; then
+    source ~/.aliases.sh
+fi
+
+# Java
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+
+# Maven
+export M2_HOME=/usr/share/maven
+export M2=$M2_HOME/bin
+MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
+MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
+MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
+export MAVEN_OPTS
+
+# ssh
+export SSH_KEY_PATH="~/.ssh/rsa_id"
+alias cleanSsh="if [ -d $HOME/.ssh ]; then
+    if [ -f $HOME/.ssh/known_hosts ]
+    then
+        echo 'removing SSH known Hosts - printing previous contents'
+        cat ~/.ssh/known_hosts
+        rm ~/.ssh/known_hosts
+        echo '.ssh directory should be cleared - printing its contents'
+        ls -la ~/.ssh
+    else
+        echo 'No known ssh hosts'
+    fi
+fi"
+
+SSH_ENV="$HOME/.ssh/environment"
+
+function start_agent {
+  echo "Initializing new SSH agent..."
+  /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+  echo succeeded
+  chmod 600 "${SSH_ENV}"
+  . "${SSH_ENV}" > /dev/null
+  /usr/bin/ssh-add;
+}
+
+# Source SSH settings, if applicable
+if [ -f "${SSH_ENV}" ]; then
+  . "${SSH_ENV}" > /dev/null
+  #ps ${SSH_AGENT_PID} doesn't work under cywgin
+  ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+    start_agent;
+  }
+else
+  start_agent;
+fi
+
+#DISPLAYVAR=$SSH_CLIENT;
+#export DISPLAY=${DISPLAYVAR%% *}:0
+#echo $DISPLAY
+#export $DISPLAY
+
+# BlackBerry Shortcuts
+
+# export QNX_TARGET=/home/molson/p4/ws2/ap/msm/deckard-65x/developer/trunk/target/qnx6
+# export QNX_HOST=/home/molson/p4/ws2/ap/msm/deckard-65x/developer/trunk/host/linux/x86
+
+export QNX_CURRENT_IDE_ROOT=~/current/bbndk
+export NUMBER_OF_PROCESSORS=8
+
+export QTVER=qt5
+export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
+export QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms
+
+# Javascript
+# https://github.com/sindresorhus/guides/blob/master/npm-global-without-sudo.md
+export NPM_PACKAGES=$HOME/.npm-packages
+#export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+npm config set prefix "$NPM_PACKAGES"
+export NODE_PATH=$NPM_PACKAGES/lib/node_modules:$NODE_PATH
+
+# Unset manpath so we can inherit from /etc/manpath via the `manpath`
+# command
+unset MANPATH # delete if you already modified MANPATH elsewhere in your config
+export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
+
+# Set finish any path additions
+export PATH=$PATH:/usr/sbin
+export PATH=$PATH:/sbin
+export PATH=$PATH:/usr/local/sbin
+export PATH=$PATH:/usr/local/bin/p4v/bin
+export PATH=$PATH:$HOME/local/bin
+export PATH=$PATH:$HOME/bin
+export PATH=$PATH:$HOME/scripts
+export PATH=$PATH:$HOME/tools
+export PATH=$PATH:$HOME/tools/scripts
+export PATH=$PATH:$NPM_PACKAGES/bin
+export PATH=$PATH:$JAVA_HOME/bin
+export PATH=$PATH:$DOTFILES/bin
+export PATH=$PATH:$HOME/git/iOS-checkIPA
+export PATH=$PATH:/opt/microchip/xc8/v1.33/bin
+export PATH=$PATH:/opt/microchip/xc16/v1.22/bin
+export PATH=$PATH:/opt/microchip/xc32/v1.33/bin
