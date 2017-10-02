@@ -89,3 +89,20 @@ extract () {
 
 # zipf: to create a ZIP archive of a file or folder
 zipf() { zip -r "$1".zip "$1" ; }
+
+cleanSsh() {
+    local sshHomeDir=$HOME/.ssh
+    local knownHostsDir=$sshHomeDir/known_hosts
+    if [ -d $sshHomeDir ]; then
+        if [ -f $knownHostsDir ]
+        then
+            echo 'removing SSH known Hosts - printing previous contents'
+            cat $knownHostsDir
+            rm $knownHostsDir
+            echo '.ssh directory should be cleared - printing its contents'
+            ls -la $sshHomeDir
+        else
+            echo 'No known ssh hosts'
+        fi
+    fi
+}

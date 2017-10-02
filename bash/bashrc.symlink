@@ -24,7 +24,7 @@ shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=6000
-HISTFILESIZE=12000
+HISTFILESIZE=15000
 
 # Save and reload the history after each command finishes
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
@@ -45,13 +45,13 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-[ -e ~/.terminfo ] && export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
+[ -e ~/.terminfo ] && export TERMINFO_DIRS=$HOME/.terminfo:/usr/share/terminfo
 [ -z "$TMUX" ] && export TERM=xterm-256color-italic
 
 # define the code directory
 # This is where my code exists and where I want the `c` autocomplete to work from exclusively
-if [[ -d ~/code ]]; then
-    export CODE_DIR=~/code
+if [[ -d $HOME/code ]]; then
+    export CODE_DIR=$HOME/code
 fi
 
 # Alias definitions.
@@ -59,22 +59,26 @@ fi
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.bash_aliases ]; then
-    source ~/.bash_aliases
+if [ -f $HOME/.bash_aliases ]; then
+    source $HOME/.bash_aliases
 fi
 
 # source all common shell scripts inside of the common/ directory
 for config in $(ls $DOTFILES/common/*.sh); do
-    source $config 
+    source $config
 done
 
 # source all .bash files inside of the bash/ directory
 for config in $(ls $DOTFILES/**/*.bash); do
-    source $config 
+    source $config
 done
 
-if [ -a ~/.personalrc ]; then
-    source ~/.personalrc
+if [ -a $HOME/.privaterc ]; then
+    source $HOME/.privaterc
+fi
+
+if [ -a $HOME/.personalrc ]; then
+    source $HOME/.personalrc
 fi
 
 # enable programmable completion features (you don't need to enable
@@ -94,6 +98,10 @@ export LC_ALL=C
 export LC_CTYPE=C
 
 # vim
+if [ -f ~/.vim_runtime/install_awesome_vimrc.sh ]; then
+    sh ~/.vim_runtime/install_awesome_vimrc.sh >/dev/null
+fi
+
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
     export EDITOR='vim'
@@ -113,35 +121,22 @@ MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
 export MAVEN_OPTS
 
 # ssh
-alias cleanSsh="if [ -d $HOME/.ssh ]; then
-    if [ -f $HOME/.ssh/known_hosts ]
-    then
-        echo 'removing SSH known Hosts - printing previous contents'
-        cat ~/.ssh/known_hosts
-        rm ~/.ssh/known_hosts
-        echo '.ssh directory should be cleared - printing its contents'
-        ls -la ~/.ssh
-    else
-        echo 'No known ssh hosts'
-    fi
-fi"
-
 SSH_ENV="$HOME/.ssh/environment"
 
 function start_agent {
     echo "Initializing new SSH agent..."
-    /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+    /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "$SSH_ENV"
     echo succeeded
-    chmod 600 "${SSH_ENV}"
-    . "${SSH_ENV}" > /dev/null
+    chmod 600 "$SSH_ENV"
+    source "$SSH_ENV" > /dev/null
     /usr/bin/ssh-add;
 }
 
 # Source SSH settings, if applicable
-if [ -f "${SSH_ENV}" ]; then
-    . "${SSH_ENV}" > /dev/null
+if [ -f "$SSH_ENV" ]; then
+    source "$SSH_ENV" > /dev/null
     #ps ${SSH_AGENT_PID} doesn't work under cywgin
-    ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+    ps -ef | grep $SSH_AGENT_PID | grep ssh-agent$ >/dev/null || {
       start_agent;
     }
 else
