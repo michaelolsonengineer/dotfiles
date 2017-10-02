@@ -30,7 +30,7 @@ git_arrows() {
 
     local arrows=""
     local status
-    arrow_status="$(command git rev-list --left-right --count HEAD...@'{u}' 2>/dev/null)"
+    arrow_status="$(git rev-list --left-right --count HEAD...@'{u}' 2>/dev/null)"
 
     # do nothing if the command failed
     (( !$? )) || return
