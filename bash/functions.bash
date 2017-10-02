@@ -108,3 +108,18 @@ clean-ssh() {
         fi
     fi
 }
+
+mount-cifs-dot-smbpasswd() {
+    local remoteDir=$1
+    local localDir=$2
+
+    mkdir -p $localDir
+    if mountpoint -q $localDir; then
+        echo "$localDir is already mounted"
+        cd $localDir
+    else
+        sudo mount -t cifs $remoteDir -o credentials=$HOME/.smbpasswd,rw,user,uid=$(whoami),gid=$(whoami) $localDir \
+            && cd $localDir \
+            && echo "Successfully mounted $remoteDir to $localDir"
+    fi
+}

@@ -54,6 +54,13 @@ if [[ -d $HOME/code ]]; then
     export CODE_DIR=$HOME/code
 fi
 
+export SVN_DIFFTOOL=meld
+
+# You may need to manually set your language environment
+export LANG=en_US
+export LC_ALL=C
+export LC_CTYPE=C
+
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -91,11 +98,6 @@ if ! shopt -oq posix; then
     source /etc/bash_completion
   fi
 fi
-
-# You may need to manually set your language environment
-export LANG=en_US
-export LC_ALL=C
-export LC_CTYPE=C
 
 # vim
 if [ -f ~/.vim_runtime/install_awesome_vimrc.sh ]; then
