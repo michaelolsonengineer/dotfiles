@@ -20,7 +20,8 @@ alias sco='svn checkout'
 alias sup='svn up'
 alias scu='svn cleanup'
 alias sli='svn list'
-alias sdif="svn diff --diff-cmd=$DIFFTOOL"
+alias sd="svn diff --diff-cmd=$DIFFTOOL"
+alias sdif="svn diff -x -b | colordiff"
 alias slog='svn log -l 10'
 alias slast='svn log -l 1'
 alias smv='svn move'
