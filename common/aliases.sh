@@ -241,29 +241,6 @@ alias info='clear;machine;pwd'
 alias clearx="echo -e '\\0033\\0143'"
 alias clear='printf "\\033c"'
 
-alias g='git'
-alias gr='git rm -rf'
-alias gs='git status'
-alias ga='g add'
-alias gc='git commit -m'
-alias gp='git push origin master'
-alias gl='git pull origin master'
-
-#------------
-# Subversion
-#------------
-svnDir=~/svn
-
-# svnco: checkout a project from Subversion to the current directory
-svnco () { svn co $SVN_MIRROR/$1/trunk ${1//\//_} ; }
-
-# svndiff: diff of current file with Subversion repository
-alias sd='svn diff --diff-cmd=meld'
-
-# svnci: check in a file or directory to Subversion (will prompt for comments)
-alias svnci='svn ci'
-
-
 #-------------------------
 # C/C++/Java Programming:
 #-------------------------
@@ -285,7 +262,6 @@ alias count_loc='find . \( -name "*.c" -or -name "*.cpp" -or -name "*.h" -or -na
 
 # to do search & replace in programming code - use 'tops'
 
-
 #-------------------
 # Perl programming:
 #-------------------
@@ -301,7 +277,6 @@ viperl() { /usr/bin/vi ~/Dev/Perl/"$@" ; }
 
 # perlsh: run Perl as a shell (for testing commands)
 alias perlsh='perl -de 42'
-
 
 #-----------------
 # Misc Reminders:
@@ -326,7 +301,6 @@ osacompile_rsrc() { osacompile -x -r scpt:128 -o $1 $1; }
 
 # numerical user id: 'id -u'
 # e.g.: ls -l /private/var/tmp/mds/$(id -u)
-
 
 #-----------
 # Searching:
@@ -418,7 +392,6 @@ allStrings () { cat "$1" | tr -d "\0" | strings ; }
 # to convert text to HTML and vice vera, use 'textutil'
 # to convert a man page to PDF: man -t foo > foo.ps; open foo.ps; save as PDF
 
-
 #------------
 # Processes:
 #------------
@@ -459,72 +432,6 @@ psgrep() {
 #--------------------------
 # File & folder management:
 #--------------------------
-# various 'ls' shortcuts
-#function ll ()  { /bin/ls -aOl "$@" | /usr/bin/more ; }
-#function lll () { /bin/ls -aOle "$@" | /usr/bin/more ; }
-#function lt ()  { /bin/ls -lt "$@" | /usr/bin/more ; }
-#function lsr () { /bin/ls -l "$@"/..namedfork/rsrc ; }
-
-upto () {
-    if [ -z "$1" ]; then
-        return
-    fi
-    local upto=$1
-    cd "${PWD/\/$upto\/*//$upto}"
-}
-
-_upto() {
-    local cur=${COMP_WORDS[COMP_CWORD]}
-    local d=${PWD//\//\ }
-    COMPREPLY=( $( compgen -W "$d" -- "$cur" ) )
-}
-
-jd() {
-    if [ -z "$1" ]; then
-        echo "Usage: jd [directory]";
-        return 1
-    else
-        cd **"/$1"
-    fi
-}
-
-up() {
-    ups=""
-    for i in $(seq 1 $1); do
-        ups=$ups"../"
-    done
-    cd $ups
-}
-
-if [ "$CURRENT_SHELL" = "bash" ]; then
-    complete -F _upto upto
-fi
-
-# open archive and extract contents
-extract () {
-     if [ -f $1 ] ; then
-         case $1 in
-             *.tar.bz2)   tar xjf $1     ;;
-             *.tar.gz)    tar xzf $1     ;;
-             *.tar.xz)    tar xJf $1     ;;
-             *.bz2)       bunzip2 $1     ;;
-             *.rar)       rar x $1       ;;
-             *.gz)        gunzip $1      ;;
-             *.tar)       tar xf $1      ;;
-             *.tbz2)      tar xjf $1     ;;
-             *.tgz)       tar xzf $1     ;;
-             *.zip)       unzip $1       ;;
-             *.Z)         uncompress $1  ;;
-             *.7z)        7z x $1        ;;
-             *)           echo "'$1' cannot be extracted via extract()" ;;
-         esac
-     else
-         echo "'$1' is not a valid file"
-     fi
-}
-
-# zipf: to create a ZIP archive of a file or folder
-zipf() { zip -r "$1".zip "$1" ; }
 
 # numFiles: number of (non-hidden) files in current directory
 alias numFiles='echo $(ls -1 | wc -l)'
@@ -540,7 +447,6 @@ showa() { grep -i -a1 $@ ~/.aliases.sh | grep -v '^\s*$' ; }
 
 # sourcea: to source this file (to make changes active after editing)
 alias sourcea='source ~/.aliases.sh'
-
 
 #-----------------------
 # Correct common typos:
@@ -560,75 +466,4 @@ alias cic='set completion-ignore-case On'
 alias show_options='shopt'
 
 alias acking='ACK_PAGER_COLOR="less -x4SRFX" /usr/bin/ack-grep -a'
-
-# # GDB scripts
-# alias currentgdb="~/current/p4/deckard-65x/developer/trunk/host/linux/x86/usr/bin/ntoarm-gdb"
-
-# # BDT shortcuts
-# alias bdtlogs='bdt.py -CLI --run="Extract Logs"'
-# alias bdttracelogger='bdt.py -CLI --run="Tracelogger Tools"'
-# alias bdtwebsl='bdt.py -CLI --run="OTA WebSL Change Tool"'
-# alias bdtmount='bdt.py -CLI --run="Remote File Access"'
-# alias bdtfileaccess='bdt.py -CLI --run="Remote File Access"'
-# alias bdtnfs='bdt.py -CLI --run="Remote File Access"'
-# alias bdtscreen='bdt.py -CLI --run="Screen Capturing"'
-# alias bdtshell='bdt.py -CLI --run="Remote Shell Terminal"'
-# alias bdtbar='bdt.py -CLI --run="Application BAR Tools"'
-# alias bdtgui='bdt.py -GUI'
-
-# # QDT shortcuts
-# alias qdtlogs='qdt.py -CLI --run="Extract Logs"'
-# alias qdttracelogger='qdt.py -CLI --run="Tracelogger Tools"'
-# alias qdtwebsl='qdt.py -CLI --run="OTA WebSL Change Tool"'
-# alias qdtmount='qdt.py -CLI --run="Remote File Access"'
-# alias qdtscreen='qdt.py -CLI --run="Screen Capturing"'
-# alias qdtshell='qdt.py -CLI --run="Remote Shell Terminal"'
-
-# # set environment aliases
-# alias setdev='cd ~/p4/branches/main/ws2/ap/msm && . setenv.sh qct && cd -'
-# alias setbranch='cd ~/p4/branches/BB10_2_0X/ws3/ap/msm && . setenv.sh qct && cd -'
-# alias setqct='cd ~/current/p4 && . setenv.sh qct && cd -'
-# alias setqnx='cd ~/current/p4 && . setenv.sh common && cd -'
-# alias setp4='cd ~/current/p4 && . setenv.sh qct && cd -'
-# alias setcommon='cd ~/current/p4 && . setenv.sh common && cd -'
-
-
-# alias gosetdev='cd ~/p4/branches/main/ws2/ap/msm && . setenv.sh qct'
-# alias gosetbranch='cd ~/p4/branches/BB10_2_0X/ws3/ap/msm  && . setenv.sh qct'
-# alias gosetqct='cd ~/current/p4 && . setenv.sh qct'
-# alias gosetqnx='cd ~/current/p4 && . setenv.sh common'
-
-# # Location aliases
-# alias godev='cd ~/p4/branches/main/ws2/ap/msm'
-# alias gobranch='cd ~/p4/branches/BB10_2_0X/ws3/ap/msm'
-# alias gocurrent='cd ~/current'
-# alias gop4='cd ~/p4'
-# alias goblue='cd ~/current/p4 && . setenv.sh common && cd ~/current/svn/bluetooth_qnx'
-# alias goaudio='cd ~/current/p4 && . setenv.sh common && cd ~/current/svn/audio_qnx'
-# alias gomisc='cd ~/current/p4 && . setenv.sh common && cd ~/current/svn/miscellaneous_qnx'
-
-# #grep -i "169.254" ~/tmp/bb10ip.dat -A7 -B1
-# #cat /var/lib/dhcp/dhclient--usb0.lease
-# #grep -i "inet addr" ~/tmp/bb10ip.dat
-# #sed "s/^.*: //g" ~/tmp/bb10ip.dat
-
-# tempvar=`ifconfig -a`
-# for v in $tempvar; do echo $v | grep addr:169.254; done > ~/tmp/BB10IP_temp.dat
-# tempvar=`cat ~/tmp/BB10IP_temp.dat`
-# IFS=":"; for v in $tempvar; do echo $v | grep 169.254; done > ~/tmp/BB10IP_temp.dat
-# IFS=" "
-# tempvar=`sed 's/\(169.254.[0-9]*.\)\([0-9]*\)/\2/' ~/tmp/BB10IP_temp.dat | awk '{dec=$1-1} END {print dec}'`
-# tempvar=`sed 's/\(169.254.[0-9]*.\)\([0-9]*\)/\1'$tempvar'/' ~/tmp/BB10IP_temp.dat`
-# export BB_ADR=$tempvar
-# rm ~/tmp/BB10IP_temp.dat
-
-# alias bbip="export BB_ADR=$(getBBIP)"
-# alias bbtelnet="export BB_ADR=$(getBBIP); telnet $BB_ADR"
-# alias bbftp="filezilla root:root@$BB_ADR &"
-# #alias bbftp="export BB_ADR=`getBBIP`; filezilla root:root@$BB_ADR"
-
-# alias bbssh="bbip; ssh root@$BB_ADR"
-# alias bbsshpd="bbip; sshpass -p 'root' ssh root@$BB_ADR"
-# alias sshjenkins="sshpass -p 'password' ssh jenkins@opias.openpeak.com"
-
 
