@@ -88,9 +88,11 @@ extract () {
 }
 
 # zipf: to create a ZIP archive of a file or folder
-zipf() { zip -r "$1".zip "$1" ; }
+zipf() {
+    zip -r "$1".zip "$1" ;
+}
 
-cleanSsh() {
+clean-ssh() {
     local sshHomeDir=$HOME/.ssh
     local knownHostsDir=$sshHomeDir/known_hosts
     if [ -d $sshHomeDir ]; then

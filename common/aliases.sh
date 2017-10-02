@@ -31,9 +31,6 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 #alias fullmake='make clean; make DEBUG=-g CCOPTS=-O0 MAKEFLAGS+=-j${NUMBER_OF_PROCESSORS} install'
 
-alias svnmelddiff='svn diff --diff-cmd="meld"'
-alias sd='svn diff --diff-cmd=meld'
-
 alias grp='grep -rI --color --exclude-dir=\.bzr --exclude-dir=\.git --exclude-dir=\.hg --exclude-dir=\.svn --exclude-dir=build --exclude-dir=dist --exclude=tags --exclude-dir=nto --exclude-dir=arm --exclude=cscope.out --exclude=cctree.out --exclude=\*.{0,1,2,js} $*'
 
 alias c='clear'
@@ -58,6 +55,7 @@ alias lld="ls -l | grep ^d $colorflag"
 alias cd..='cd ..'
 
 ## a quick way to get out of current directory ##
+alias up1="cd .."
 alias ..='cd ..'
 alias ...='cd ../../../'
 alias ....='cd ../../../../'
@@ -84,6 +82,10 @@ alias vi='vim'
 alias svi='sudo vi'
 alias vis='vim "+set si"'
 alias edit='subl'
+
+# edit multiple files split horizontally or vertically
+alias e="vim -o "
+alias E="vim -O "
 
 # do not delete / or prompt if deleting more than 3 files at a time #
 alias rm='rm -I --preserve-root'
@@ -187,7 +189,6 @@ alias du='du -ch'
 ## refresh nfs mount / cache etc for Apache ##
 alias nfsrestart='sync && sleep 2 && /etc/init.d/httpd stop && umount netapp2:/exports/http && sleep 2 && mount -o rw,sync,rsize=32768,wsize=32768,intr,hard,proto=tcp,fsc natapp2:/exports /http/var/www/html &&  /etc/init.d/httpd start'
 
-
 #Grabs the disk usage in the current directory
 #alias usage='du -ch | grep total'
 alias usage='du -ch 2> /dev/null |tail -1'
@@ -203,11 +204,6 @@ alias ducks='du -ck | sort -nr | head'
 #
 alias mosthome='du -ah /home 2>/dev/null | sort -hr | head -n 10'
 
-
-alias up1="cd .."
-# edit multiple files split horizontally or vertically
-alias e="vim -o "
-alias E="vim -O "
 # directory-size-date (remove the echo/blank line if you desire)
 alias dsd="echo;ls -Fla"
 alias dsdm="ls -FlAh | more"
@@ -259,8 +255,6 @@ alias count_c='find . \( -name "*.c" -or -name "*.cpp" -or -name "*.h" -or -name
 
 # count lines of C or C++ or Obj-C or Java code under the current directory
 alias count_loc='find . \( -name "*.c" -or -name "*.cpp" -or -name "*.h" -or -name "*.m" -or -name "*.java" \) -print0 | xargs -0 wc'
-
-# to do search & replace in programming code - use 'tops'
 
 #-------------------
 # Perl programming:
@@ -466,4 +460,3 @@ alias cic='set completion-ignore-case On'
 alias show_options='shopt'
 
 alias acking='ACK_PAGER_COLOR="less -x4SRFX" /usr/bin/ack-grep -a'
-

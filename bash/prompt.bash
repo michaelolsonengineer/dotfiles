@@ -3,7 +3,8 @@
 
 git_dirty() {
     # check if we're in a git repo
-    git rev-parse --is-inside-work-tree &>/dev/null || return
+    git rev-parse --is-inside-work-tree &>/dev/null
+    [ $? -ne 0 ] && return
 
     # check if it's dirty
     git diff --quiet --ignore-submodules HEAD &>/dev/null;
@@ -37,7 +38,7 @@ git_arrows() {
 
     # split on tabs
     # arrow_status=(${(ps:\t:)arrow_status})
-    local left=${arrow_status[1]} 
+    local left=${arrow_status[1]}
     local right=${arrow_status[2]}
 
     (( ${right:-0} > 0 )) && arrows+="⇣"
