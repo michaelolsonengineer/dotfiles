@@ -59,7 +59,7 @@ export SVN_DIFFTOOL=meld
 # You may need to manually set your language environment
 export LANG=en_US
 export LC_ALL=C
-export LC_CTYPE=C
+export LC_CTYPE=en_US.UTF-8
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like

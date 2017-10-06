@@ -1,29 +1,65 @@
 # gitconfig
 [user]
-    name = Nick Nisi
-    email = nick@nisi.org
+    name = Michael P Olson
+    email = michael.olson@netcommwireless.com
+
 [github]
-    user = nicknisi
+    user = michaelolsonengineer
+
+[gitlab]
+    user = michaelolsonengineer
+
 [init]
     templatedir = ~/.dotfiles/git/templates
+
+[pager]
+    # requires cloning diff-so-fancy from github
+    diff = "diff-so-fancy | less --tabs=4 -RFX"
+    show = "diff-so-fancy | less --tabs=4 -RFX"
+
 [alias]
     # list all aliases
     la = "!git config -l | grep alias | cut -c 7-"
-    delete-merged-branches = "!f() { git checkout --quiet master && git branch --merged | grep --invert-match '\\*' | xargs -n 1 git branch --delete; git checkout --quiet @{-1}; }; f"
-    diff = diff --ignore-space-at-eol -b -w --ignore-blank-lines
+
     cnv = commit --no-verify
+    ci = commit
     pnv = push --no-verify
     co = checkout
     cob = checkout -b
     s = status --short
-    ss  = status
+    ss = status
+    st = status
     br = branch -v
+    br = branch
+    lg = log -p
+    type = cat-file -t
+    dump = cat-file -p
+
+    delete-merged-branches = "!f() { git checkout --quiet master && git branch --merged | grep --invert-match '\\*' | xargs -n 1 git branch --delete; git checkout --quiet @{-1}; }; f"
+
+    diff = diff --ignore-space-at-eol -b -w --ignore-blank-lines
+    df = difftool
+    diffr = "!f() { git diff "$1"^.."$1"; }; f"
+    dr = "!f() { git diff "$1"^.."$1"; }; f"
 
     # rebase commands
     cont = rebase --continue
     conf = "!git s | grep ^U"
 
+    ### log commands ###
     l = log --graph --pretty=format:'%Cred%h%Creset %C(bold blue)%an%C(reset) - %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+    hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+    ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cgreen\\ [%cn]" --decorate
+    ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cgreen\\ [%cn]" --decorate --numstat
+    lnc = log --pretty=format:"%h\\ %s\\ [%cn]"
+    lds = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cgreen\\ [%cn]" --decorate --date=short
+    lsd = log --graph --decorate --pretty=oneline --abbrev-commit --all
+    ld = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cgreen\\ [%cn]" --decorate --date=relative
+    filelog = log -u
+    fl = log -u
+    dl = "!git ll -1"
+    dlc = diff --cached HEAD^
+    lc = "!f() { git ll "$1"^.."$1"; }; f"
 
     # show what I did today
     day = "!sh -c 'git log --reverse --no-merges --branches=* --date=local --after=\"yesterday 11:59PM\" --author=\"`git config --get user.name`\"'"
@@ -51,12 +87,15 @@
     si = submodule init
     su = submodule update
     sub = "!git submodule sync && git submodule update"
+    up = "!git pull && git submodule update --init --recursive"
 
     # show number of commits per contributer, sorted
     count = shortlog -sn
 
     undo = reset --soft HEAD~1
+    # undo = reset HEAD~1 --mixed
     amend = commit -a --amend
+    unpush = "!git push -f origin HEAD^:$(git rev-parse --abbrev-ref HEAD)"
 
     cleanup = "!git remote prune origin && git gc && git clean -df && git stash clear"
 
@@ -68,20 +107,19 @@
     lt = describe --tags --abbrev=0
 
     # assume aliases
-    assume = update-index --assume-unchanged
-    unassume = update-index --no-assume-unchanged
-    assumed = "!git ls-files -v | grep ^h | cut -c 3-"
-    unassumeall = "!git assumed | xargs git update-index --no-assume-unchanged"
+    hide = update-index --assume-unchanged
+    unhide = update-index --no-assume-unchanged
+    hidden = "!git ls-files -v | grep ^h | cut -c 3-"
+    unhideall = "!git assumed | xargs git update-index --no-assume-unchanged"
 
-    # clean up all 
+    # clean up all
     forget = "!git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
     # show the most recently touched branches
     recent = "!git for-each-ref --sort='-committerdate' --format='%(color:red)%(refname)%(color:reset)%09%(committerdate)' refs/heads | sed -e 's-refs/heads/--' | less -XFR"
     latest = "!git for-each-ref --sort='-committerdate' --format='%(color:red)%(refname)%(color:reset)%09%(committerdate)' refs/remotes | sed -e 's-refs/remotes/origin/--' | less -XFR"
 
-    # grep commands
-
+    ### grep commands ###
     # 'diff grep'
     dg = "!sh -c 'git ls-files -m | grep $1 | xargs git diff' -"
     # diff grep changes between two commits
@@ -103,63 +141,139 @@
     # check out a local copy of a PR. https://gist.github.com/gnarf/5406589
     pr = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
     pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
+
+    # git-svn
+    spull = "!LAST_REV=`git svn find-rev $(git log --max-count 1 --pretty=format:%H))`; echo $LAST_REV; git-svn fetch -r$LAST_REV && git-svn rebase -l"
+    spush = "!git-svn dcommit"
+
 [color]
     diff = auto
     status = auto
     branch = auto
     interactive = auto
     ui = auto
+
 [color "branch"]
     current = green bold
     local = green
     remote = red bold
+
 [color "diff"]
     meta = yellow bold
     frag = magenta bold
     old = red bold
     new = green bold
+
 [color "status"]
     added = green bold
     changed = yellow bold
     untracked = red
+
 [color "sh"]
     branch = yellow
+
+[pack]
+    windowMemory = 1g
+
 [push]
     # push will only do the current branch, not all branches
     default = current
+
 [branch]
     # set up 'git pull' to rebase instead of merge
     autosetuprebase = always
+
+[apply]
+    # do not warn about missing whitespace at EOF
+    whitespace = nowarn
+
+[core]
+    pager = less -FXRS -x2
+    editor = vim
+    whitespace = cr-at-eol
+    repositoryformatversion = 0
+    filemode = true
+    bare = false
+    logallrefupdates = true
+    ignorecase = false
+    precomposeunicode = false
+    excludesfile = ~/.gitignore_global
+
+[rerere]
+    enabled = true
+
+[gitsh]
+    defaultCommand = s
+
+[grep]
+    extendRegexp = true
+    lineNumber = true
+
+[credential]
+    helper = cache --timeout 3600
+
+[http]
+    postBuffer = 1048576000
+
+[gitflow "branch"]
+    master = master
+    develop = develop
+
+[gitflow "prefix"]
+    feature = feature/
+    release = release/
+    hotfix = hotfix/
+    support = support/
+    versiontag =
+
+[merge]
+    keepBackup = false;
+    tool = meld
+
+[mergetool]
+    prompt = false
+    tool = meld
+
+[mergetool "meld"]
+    cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+    #cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED"
+    keepTemporaries = false
+    trustExitCode = false
+    keepBackup = false
+
+[mergetool "p4merge"]
+    cmd = p4merge "$BASE" "$LOCAL" "$REMOTE" "$MERGED"
+    keepTemporaries = false
+    trustExitCode = false
+    keepBackup = false
+
 [diff]
     renames = copies
     mnemonicprefix = true
     compactionHeuristic = true
+
 [difftool]
     prompt = false
-[apply]
-    # do not warn about missing whitespace at EOF
-    whitespace = nowarn
-[core]
-    excludesfile = ~/.gitignore_global
-    pager = less -FXRS -x2
-    editor = vim
-    whitespace = cr-at-eol
-[rerere]
-    enabled = true
-[gitsh]
-    defaultCommand = s
-[grep]
-    extendRegexp = true
-    lineNumber = true
-[credential]
-	helper = osxkeychain
+    tool = meld
+
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+    keepTemporaries = false
+    trustExitCode = false
+    keepBackup = false
+
+[difftool "p4merge"]
+    cmd = p4merge "$LOCAL" "$REMOTE"
+    keepTemporaries = false
+    trustExitCode = false
+    keepBackup = false
+
 [difftool "Kaleidoscope"]
-	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+    cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+
 [mergetool "Kaleidoscope"]
-	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-	trustexitcode = true
+    cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+    trustexitcode = true
+
 [rebase]
-	instructionFormat = "[%an - %ar] %s"
-[pager]
-    diff = "diff-so-fancy | less --tabs=4 -RFX"
-    show = "diff-so-fancy | less --tabs=4 -RFX"
+    instructionFormat = "[%an - %ar] %s"
