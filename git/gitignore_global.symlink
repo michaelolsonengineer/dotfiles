@@ -1,5 +1,3 @@
-.DS_Store
-Thumbs.db
 *~
 *.swp
 .AppleDouble
@@ -8,6 +6,13 @@ Icon
 
 # Thumbnails
 ._*
+*~
+.DS_Store
+Thumbs.db
+
+# other source control
+.hg
+.svn
 
 # Files that might appear on external disk
 .Spotlight-V100
@@ -24,3 +29,28 @@ tscommand*.txt
 
 # npm things
 npm-debug.log
+
+*.mo
+*.egg-info
+*.egg
+*.EGG
+*.EGG-INFO
+bin
+build
+develop-eggs
+downloads
+eggs
+fake-eggs
+parts
+dist
+.installed.cfg
+.mr.developer.cfg
+.bzr
+
+*.pyc
+*.pyo
+*.tmp*
+*.class
+*.bak
+.bzrignore
+.hgignore
