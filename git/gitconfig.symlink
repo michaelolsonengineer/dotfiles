@@ -1,13 +1,9 @@
 # gitconfig
 [user]
-    name = Michael P Olson
-    email = michael.olson@netcommwireless.com
-
+    name = Nick Nisi
+    email = nick@nisi.org
 [github]
-    user = michaelolsonengineer
-
-[gitlab]
-    user = michaelolsonengineer
+    user = nicknisi
 
 [init]
     templatedir = ~/.dotfiles/git/templates
