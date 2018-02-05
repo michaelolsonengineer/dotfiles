@@ -31,8 +31,8 @@ if [ "$(uname)" == "Darwin" ]; then
     ln -s ~/.dotfiles/nginx/code.dev /usr/local/etc/nginx/sites-enabled/code.dev
 fi
 
-echo "creating vim directories"
-mkdir -p ~/.vim-tmp
+# echo "creating vim directories"
+# mkdir -p ~/.vim-tmp
 
 if ! command_exists zsh; then
     echo "zsh not found. Please install and then re-run installation scripts"

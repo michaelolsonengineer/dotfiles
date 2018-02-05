@@ -18,11 +18,12 @@ alias gunhide="git update-index --no-assume-unchanged"
 alias gunhideall="git-unhide-all"
 alias gundolast='git reset --soft HEAD~1'
 alias gcount='git shortlog -sn'
+alias gconflict="git diff --name-only --diff-filter=U"
 #alias cpbr="git rev-parse --abbrev-ref HEAD | pbcopy"
 
 # git root
 alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
-
+alias isgitrepo="git rev-parse --is-inside-work-tree"
 alias sub-pull='git submodule foreach git pull origin master'
 
 give-credit() {
@@ -47,5 +48,13 @@ g() {
     else
         # otherwise, run git status
         git status
+    fi
+}
+
+gitwipe() {
+    local is_git_repo=$(git rev-parse --is-inside-work-tree)
+    if $is_git_repo; then
+        rm -rf *
+        git checkout .
     fi
 }

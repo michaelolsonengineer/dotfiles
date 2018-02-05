@@ -133,3 +133,7 @@ function hl() {
 
     echo $src | highlight -O rtf --syntax $1 --font Inconsoloata --style $style --line-number --font-size 24 | pbcopy
 }
+
+function command_exists() {
+    type "$1" > /dev/null 2>&1
+}

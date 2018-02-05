@@ -123,3 +123,22 @@ mount-cifs-dot-smbpasswd() {
             && echo "Successfully mounted $remoteDir to $localDir"
     fi
 }
+
+command_exists() {
+    type "$1" > /dev/null 2>&1
+}
+
+mount-uuid-ntfs() {
+    local uuid=$1
+    local localDir=$2
+
+    mkdir -p $localDir
+    if mountpoint -q $localDir; then
+        echo "$localDir is already mounted"
+        cd $localDir
+    else
+        sudo mount -t ntfs-3g --uuid $uuid -o auto,rw,permissions $localDir \
+            && cd $localDir \
+            && echo "Successfully mounted UUID=$uuid to $localDir"
+    fi
+}

@@ -8,16 +8,17 @@ hooks=~/.dotfiles/git/hooks
 
 echo "Executing $hook_type hook(s)"
 
-for hook in $hooks/*.$hook_type; do
+hooktypes=$(find $hooks -name "*.$hook_type")
+for hook in $hooktypes; do
 	echo ""
-	echo "${COLOR_LIGHTPURPLE}Executing ${hook}${COLOR_NONE}"
-	${hook}
-	EXIT_CODE=$((${EXIT_CODE} + $?))
+	echo "${COLOR_LIGHTPURPLE}Executing $hook$COLOR_NONE"
+	$hook
+	EXIT_CODE=$(($EXIT_CODE + $?))
 done
 
-if [[ ${EXIT_CODE} -ne 0 ]]; then
+if [ $EXIT_CODE -ne 0 ]; then
 	echo ""
-	echo "${COLOR_RED}Commit Failed.${COLOR_NONE}"
+	echo "${COLOR_RED}Commit Failed.$COLOR_NONE"
 fi
 
-exit $((${EXIT_CODE}))
+exit $(($EXIT_CODE))

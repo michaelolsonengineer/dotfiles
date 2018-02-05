@@ -9,13 +9,16 @@
 [gitlab]
     user = michaelolsonengineer
 
+[credential]
+    helper = cache --timeout 3600
+
 [init]
     templatedir = ~/.dotfiles/git/templates
 
 [pager]
     # requires cloning diff-so-fancy from github
     diff = "diff-so-fancy | less --tabs=4 -RFX"
-    show = "diff-so-fancy | less --tabs=4 -RFX"
+    # show = "diff-so-fancy | less --tabs=4 -RFX"
 
 [alias]
     # list all aliases
@@ -187,6 +190,12 @@
     # do not warn about missing whitespace at EOF
     whitespace = nowarn
 
+#[pack]
+#    threads = 1
+#    deltaCacheSize = 128m
+#    packSizeLimit = 128m
+#    windowMemory = 128m
+
 [core]
     pager = less -FXRS -x2
     editor = vim
@@ -198,6 +207,8 @@
     ignorecase = false
     precomposeunicode = false
     excludesfile = ~/.gitignore_global
+    #packedGitLimit = 128m
+    #packedGitWindowSize = 128m
 
 [rerere]
     enabled = true
@@ -208,9 +219,6 @@
 [grep]
     extendRegexp = true
     lineNumber = true
-
-[credential]
-    helper = cache --timeout 3600
 
 [http]
     postBuffer = 1048576000
@@ -229,6 +237,7 @@
 [merge]
     keepBackup = false;
     tool = meld
+    summary = true
 
 [mergetool]
     prompt = false
@@ -251,6 +260,7 @@
     renames = copies
     mnemonicprefix = true
     compactionHeuristic = true
+    renameLimit = 999999
 
 [difftool]
     prompt = false
@@ -277,3 +287,9 @@
 
 [rebase]
     instructionFormat = "[%an - %ar] %s"
+
+[gui]
+    tabsize = 4
+
+[gc]
+    auto = 0
