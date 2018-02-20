@@ -293,3 +293,5 @@
 
 [gc]
     auto = 0
+[receive]
+	denyCurrentBranch = updateInstead
