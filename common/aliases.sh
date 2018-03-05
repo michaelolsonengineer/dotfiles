@@ -398,7 +398,7 @@ alias pstree='/sw/bin/pstree -g 2 -w'
 findPid() { sudo lsof -t -c "$@" ; }
 
 # to find memory hogs:
-alias mem_hogs_top='top -l 1 -o rsize -n 10'
+alias mem_hogs_top='top -n 10'
 alias mem_hogs_ps='ps wwaxm -o pid,stat,vsize,rss,time,command | head -10'
 
 # to find CPU hogs

@@ -193,7 +193,7 @@
 #[pack]
 #    threads = 1
 #    deltaCacheSize = 128m
-#    packSizeLimit = 128mz
+#    packSizeLimit = 128m
 #    windowMemory = 128m
 
 [core]
