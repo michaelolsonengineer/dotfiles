@@ -460,3 +460,6 @@ alias cic='set completion-ignore-case On'
 alias show_options='shopt'
 
 alias acking='ACK_PAGER_COLOR="less -x4SRFX" /usr/bin/ack-grep -a'
+
+alias reboot='echo "Please use reboot_linux as this has been aliased to prevent accidental reboot"'
+alias reboot_linux='/sbin/reboot'
