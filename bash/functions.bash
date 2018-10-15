@@ -2,8 +2,80 @@
 # functions
 ####################
 
+# is x grep argument available?
+grep-flag-available() {
+    echo | grep $1 "" >/dev/null 2>&1
+}
+
+grp() {
+    local GREP_OPTIONS=""
+    local VCS_FOLDERS="{.bzr,.cvs,.git,.hg,.svn}"
+    local TEMP_FOLDERS="{tmp,bin,build,dist,nto,arm}"
+    local DATA_FILES="{tags,cscope.out,cctree.out}"
+    local VERSION_FILES="\*.{0,1,2}"
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+
+    if grep-flag-available --exclude-dir=.cvs; then
+        GREP_OPTIONS+=" --exclude-dir=$VCS_FOLDERS"
+        GREP_OPTIONS+=" --exclude-dir=$TEMP_FOLDERS"
+    elif grep-flag-available --exclude=.cvs; then
+        GREP_OPTIONS+=" --exclude=$VCS_FOLDERS"
+        GREP_OPTIONS+=" --exclude=$TEMP_FOLDERS"
+    fi
+
+    if grep-flag-available --exclude=tags; then
+        GREP_OPTIONS+=" --exclude=$DATA_FILES"
+        GREP_OPTIONS+=" --exclude=$VERSION_FILES"
+    fi
+
+    /bin/grep \
+        --recursive \
+        --binary-files=without-match \
+        --line-number \
+        --with-filename \
+        $GREP_OPTIONS \
+        $@
+}
+
+command_exists() {
+    type "$1" > /dev/null 2>&1
+}
+
+open_command() {
+  local open_cmd
+
+  # define the open command
+  case "$OSTYPE" in
+    darwin*)  open_cmd='open' ;;
+    cygwin*)  open_cmd='cygstart' ;;
+    linux*)   if ! [[ $(uname -a) =~ "Microsoft" ]]; then
+                open_cmd='xdg-open' 
+              else
+                open_cmd='cmd.exe /c start ""'
+                if [ -e "$1" ]; then 
+                    1="$(wslpath -w "${1:a}")" || return 1 
+                fi
+              fi
+              ;;
+    msys*)    open_cmd='start ""' ;;
+    *)        echo "Platform $OSTYPE not supported"
+              return 1
+              ;;
+  esac
+
+  # don't use nohup on OSX
+  if [ "$OSTYPE" == darwin* ]; then
+    $open_cmd "$@" &>/dev/null
+  else
+    nohup $open_cmd "$@" &>/dev/null
+  fi
+}
+
+alias o='open_command'
+
 # print available colors and their numbers
-function colours() {
+colours() {
     for i in {0..255}; do
         printf "\x1b[38;5;${i}m colour${i}"
         if (( $i % 5 == 0 )); then
@@ -15,18 +87,24 @@ function colours() {
 }
 
 # find shorthand
-function f() {
-    find . -name "$1"
-}
+f() { find . -name "$@"; }
+# ff:  to find a file under the current directory
+ff() { find . -name "$@" ; }
+# ffs: to find a file whose name starts with a given string
+ffs() { find . -name "$@"'*' ; }
+# ffe: to find a file whose name ends with a given string
+ffe() { find . -name '*'"$@" ; }
 
 pretty() {
     pygmentize -f terminal256 $* | less -R
 }
 
 # take this repo and copy it to somewhere else minus the .git stuff.
-function gitexport(){
-    mkdir -p "$1"
-    git archive master | tar -x -C "$1"
+gitexport() {
+    local directory=$1
+    local branch=${2:master}
+    mkdir -p "$directory"
+    git archive $branch | tar -x -C "$directory"
 }
 
 upto () {
@@ -122,10 +200,6 @@ mount-cifs-dot-smbpasswd() {
             && cd $localDir \
             && echo "Successfully mounted $remoteDir to $localDir"
     fi
-}
-
-command_exists() {
-    type "$1" > /dev/null 2>&1
 }
 
 mount-uuid-ntfs() {

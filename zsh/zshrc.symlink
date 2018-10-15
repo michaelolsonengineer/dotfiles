@@ -1,5 +1,6 @@
 export DOTFILES=$HOME/.dotfiles
 export ZSH=$DOTFILES/zsh
+export CURRENT_SHELL=$(ps -p $$ | awk '$1 == PP {print $4}' PP=$$)
 
 command_exists() {
     type "$1" > /dev/null 2>&1
@@ -8,12 +9,27 @@ command_exists() {
 # display how long all tasks over 10 seconds take
 export REPORTTIME=10
 
-[[ -e ~/.terminfo ]] && export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
+## History file configuration
+[ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+
+## History command configuration
+setopt extended_history       # record timestamp of command in HISTFILE
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt hist_ignore_dups       # ignore duplicated commands history list
+setopt hist_ignore_space      # ignore commands that start with space
+setopt hist_verify            # show command with history expansion to user before running it
+setopt inc_append_history     # add commands to HISTFILE in order of execution
+setopt share_history          # share command history data
+
+[ -e ~/.terminfo ] && export TERMINFO_DIRS=$HOME/.terminfo:/usr/share/terminfo
+[ -z "$TMUX" ] && export TERM=xterm-256color-italic
 
 # define the code directory
 # This is where my code exists and where I want the `c` autocomplete to work from exclusively
-if [[ -d ~/code ]]; then
-    export CODE_DIR=~/code
+if [[ -d $HOME/code ]]; then
+    export CODE_DIR=$HOME/code
 fi
 
 # source all .zsh files inside of the zsh/ directory
@@ -32,6 +48,19 @@ autoload -U compinit add-zsh-hook
 compinit
 
 for config ($ZSH/**/*completion.sh) source $config
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+if [ -f ~/.aliases.sh ]; then
+    source ~/.aliases.sh
+fi
+
+# source all common shell scripts inside of the common/ directory
+for config in $(ls $DOTFILES/common/*.sh); do
+    source $config
+done
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -62,7 +91,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export ZPLUG_LOADFILE=$DOTFILES/zsh/zplug.sh
 
 # only source zplug on initial load
-if [ -z ${RELOAD} ]; then
+if [ -z "$RELOAD" ]; then
     if ! [ type "zplug" > /dev/null 2>&1 ]; then
         source ~/.zplug/init.zsh
     fi
@@ -73,20 +102,12 @@ fi
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
-export LANG=en_US
-export LC_ALL=C
-export LC_CTYPE=C
+# export LANG=en_US
+# export LC_ALL=C
+# export LC_CTYPE=C
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-if [ -f ~/.aliases.sh ]; then
-    source ~/.aliases.sh
-fi
 
 # Java
 export JAVA_HOME=/usr/lib/jvm/java-8-oracle
@@ -116,24 +137,24 @@ fi"
 
 SSH_ENV="$HOME/.ssh/environment"
 
-function start_agent {
+start_agent() {
   echo "Initializing new SSH agent..."
-  /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+  /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "$SSH_ENV"
   echo succeeded
-  chmod 600 "${SSH_ENV}"
-  . "${SSH_ENV}" > /dev/null
+  chmod 600 "$SSH_ENV"
+  . "$SSH_ENV" > /dev/null
   /usr/bin/ssh-add;
 }
 
 # Source SSH settings, if applicable
-if [ -f "${SSH_ENV}" ]; then
-  . "${SSH_ENV}" > /dev/null
-  #ps ${SSH_AGENT_PID} doesn't work under cywgin
-  ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
-    start_agent;
-  }
+# Note: `ps ${SSH_AGENT_PID}` doesnt work under cywgin
+if [ -f "$SSH_ENV" ]; then
+    source "$SSH_ENV" > /dev/null
+    ps -ef | grep $SSH_AGENT_PID | grep ssh-agent$ >/dev/null || {
+      start_agent;
+    }
 else
-  start_agent;
+    start_agent;
 fi
 
 #DISPLAYVAR=$SSH_CLIENT;
@@ -141,31 +162,51 @@ fi
 #echo $DISPLAY
 #export $DISPLAY
 
-# BlackBerry Shortcuts
+export SVN_DIFFTOOL=meld
+export TERM_BOLD=$(tput smso)
+export TERM_RESET=$(tput rmso)
+export NUMBER_OF_CORES=$(/usr/bin/nproc || grep -c ^processor /proc/cpuinfo || echo "1")
+export HALF_NUMBER_OF_CORES=$(printf "%1.f" "$(($NUMBER_OF_CORES/2))")
 
-# export QNX_TARGET=/home/molson/p4/ws2/ap/msm/deckard-65x/developer/trunk/target/qnx6
-# export QNX_HOST=/home/molson/p4/ws2/ap/msm/deckard-65x/developer/trunk/host/linux/x86
+# vim
+if [ -f ~/.vim_runtime/install_awesome_vimrc.sh ]; then
+    sh ~/.vim_runtime/install_awesome_vimrc.sh >/dev/null
+fi
 
-export QNX_CURRENT_IDE_ROOT=~/current/bbndk
-export NUMBER_OF_PROCESSORS=8
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+    export EDITOR='vim'
+    export GIT_EDITOR='vim'
+else
+    export EDITOR='vim'
+    export GIT_EDITOR='vim'
+fi
 
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+
+export M2_HOME=/usr/share/maven
+export M2=$M2_HOME/bin
+MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
+MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
+MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
+export MAVEN_OPTS
+
+# Qt environment
 export QTVER=qt5
 export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
 export QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms
 
-# Javascript
+# NPM environment
 # https://github.com/sindresorhus/guides/blob/master/npm-global-without-sudo.md
 export NPM_PACKAGES=$HOME/.npm-packages
 #export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 npm config set prefix "$NPM_PACKAGES"
 export NODE_PATH=$NPM_PACKAGES/lib/node_modules:$NODE_PATH
 
-# Unset manpath so we can inherit from /etc/manpath via the `manpath`
-# command
+# Unset manpath so we can inherit from /etc/manpath via the `manpath` command
 unset MANPATH # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 
-# Set finish any path additions
 export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
 export PATH=$PATH:/usr/local/sbin
@@ -177,8 +218,52 @@ export PATH=$PATH:$HOME/tools
 export PATH=$PATH:$HOME/tools/scripts
 export PATH=$PATH:$NPM_PACKAGES/bin
 export PATH=$PATH:$JAVA_HOME/bin
-export PATH=$PATH:$DOTFILES/bin
 export PATH=$PATH:$HOME/git/iOS-checkIPA
 export PATH=$PATH:/opt/microchip/xc8/v1.33/bin
 export PATH=$PATH:/opt/microchip/xc16/v1.22/bin
 export PATH=$PATH:/opt/microchip/xc32/v1.33/bin
+# export PATH=$PATH:$HOME/current/p4/deckard-65x/developer/trunk/host/linux/x86/usr/bin
+# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_ramdump/linux
+# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_ramdump/scripts
+# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_busydisp
+# export PATH=$PATH:$HOME/p4/dev/armos/toolsrc/bb10_ramdump_server
+# export PATH=$PATH:$HOME/p4/dev/GK/Scripts/gkh
+# export PATH=$PATH:$HOME/p4/dev/GK/Scripts/OSTools
+# export PATH=$PATH:/opt/qdt/QDT
+# export PATH=$PATH:$QCT_DEV_SCRIPTS
+# export PATH=$PATH:$QCT_DEV_SCRIPTS/d65_int
+# export PATH=$PATH:/opt/tools/klocwork/bin
+
+# added by Anaconda2 5.3.0 installer
+# >>> conda init >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$(CONDA_REPORT_ERRORS=false '/opt/anaconda2/bin/conda' shell.bash hook 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    \eval "$__conda_setup"
+else
+    if [ -f "/opt/anaconda2/etc/profile.d/conda.sh" ]; then
+        . "/opt/anaconda2/etc/profile.d/conda.sh"
+        CONDA_CHANGEPS1=false conda activate base
+    else
+        \export PATH="/opt/anaconda2/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda init <<<
+
+# # added by Anaconda3 5.3.0 installer
+# # >>> conda init >>>
+# # !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$(CONDA_REPORT_ERRORS=false '/opt/anaconda3/bin/conda' shell.zsh hook 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     \eval "$__conda_setup"
+# else
+#     if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+#         . "/opt/anaconda3/etc/profile.d/conda.sh"
+#         CONDA_CHANGEPS1=false conda activate base
+#     else
+#         \export PATH="/opt/anaconda3/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# # <<< conda init <<<

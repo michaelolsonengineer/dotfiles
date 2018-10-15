@@ -23,8 +23,10 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=6000
-HISTFILESIZE=15000
+[ -z "$HISTFILE" ] && HISTFILE="$HOME/.bash_history"
+HISTSIZE=10000
+HISTFILESIZE=50000
+SAVEHIST=10000
 
 # Save and reload the history after each command finishes
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
@@ -55,6 +57,10 @@ if [[ -d $HOME/code ]]; then
 fi
 
 export SVN_DIFFTOOL=meld
+export TERM_BOLD=$(tput smso)
+export TERM_RESET=$(tput rmso)
+export NUMBER_OF_CORES=$(/usr/bin/nproc || grep -c ^processor /proc/cpuinfo || echo "1")
+export HALF_NUMBER_OF_CORES=$(printf "%1.f" "$(($NUMBER_OF_CORES/2))")
 
 # You may need to manually set your language environment
 # export LANG=en_US
@@ -125,7 +131,7 @@ export MAVEN_OPTS
 # ssh
 SSH_ENV="$HOME/.ssh/environment"
 
-function start_agent {
+start_agent() {
     echo "Initializing new SSH agent..."
     /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "$SSH_ENV"
     echo succeeded
@@ -135,9 +141,9 @@ function start_agent {
 }
 
 # Source SSH settings, if applicable
+# Note: `ps ${SSH_AGENT_PID}` doesnt work under cywgin
 if [ -f "$SSH_ENV" ]; then
     source "$SSH_ENV" > /dev/null
-    #ps ${SSH_AGENT_PID} doesn't work under cywgin
     ps -ef | grep $SSH_AGENT_PID | grep ssh-agent$ >/dev/null || {
       start_agent;
     }
@@ -192,3 +198,39 @@ export PATH=$PATH:/opt/microchip/xc32/v1.33/bin
 # export PATH=$PATH:$QCT_DEV_SCRIPTS
 # export PATH=$PATH:$QCT_DEV_SCRIPTS/d65_int
 # export PATH=$PATH:/opt/tools/klocwork/bin
+
+# # added by Anaconda2 5.3.0 installer
+# # >>> conda init >>>
+# # !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$(CONDA_REPORT_ERRORS=false '/opt/anaconda2/bin/conda' shell.bash hook 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     \eval "$__conda_setup"
+# else
+#     if [ -f "/opt/anaconda2/etc/profile.d/conda.sh" ]; then
+#         . "/opt/anaconda2/etc/profile.d/conda.sh"
+#         CONDA_CHANGEPS1=false conda activate base
+#     else
+#         \export PATH="/opt/anaconda2/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# # <<< conda init <<<
+
+# added by Anaconda3 5.3.0 installer
+# >>> conda init >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$(CONDA_REPORT_ERRORS=false '/opt/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    \eval "$__conda_setup"
+else
+    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/opt/anaconda3/etc/profile.d/conda.sh"
+        CONDA_CHANGEPS1=false conda activate base
+    else
+        \export PATH="/opt/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda init <<<
+
+

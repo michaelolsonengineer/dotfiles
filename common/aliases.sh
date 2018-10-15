@@ -18,8 +18,6 @@ else # OS X `ls`
     colorflag="-G"
 fi
 
-alias open='xdg-open'
-
 alias svnstat="svn status | grep '^M'"
 
 alias kitten='pygmentize -g'
@@ -30,8 +28,6 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 #####
 
 #alias fullmake='make clean; make DEBUG=-g CCOPTS=-O0 MAKEFLAGS+=-j${NUMBER_OF_PROCESSORS} install'
-
-alias grp='grep -rI --color --exclude-dir=\.bzr --exclude-dir=\.git --exclude-dir=\.hg --exclude-dir=\.svn --exclude-dir=build --exclude-dir=dist --exclude=tags --exclude-dir=nto --exclude-dir=arm --exclude=cscope.out --exclude=cctree.out --exclude=\*.{0,1,2,js} $*'
 
 alias c='clear'
 
@@ -44,23 +40,22 @@ alias ls="ls $colorflag"
 
 ## Use long listing format ##
 alias ll="ls -alF $colorflag"
+alias lll="ll | less"
 alias la="ls -A $colorflag"
 alias l="ls -CF $colorflag"
 
 ## Show hidden files ##
 alias l.="ls -d .* $colorflag"
-alias lld="ls -l | grep ^d $colorflag"
+alias lld="ll | grep ^d $colorflag"
 
 ## get rid of command not found ##
 alias cd..='cd ..'
 
 ## a quick way to get out of current directory ##
-alias up1="cd .."
-alias ..='cd ..'
-alias ...='cd ../../../'
-alias ....='cd ../../../../'
-alias .....='cd ../../../../'
-alias .4='cd ../../../../'
+alias .1='cd ..'
+alias .2='cd ../..'
+alias .3='cd ../../..'
+alias .4='cd ../../../..'
 alias .5='cd ../../../../..'
 
 alias bc='bc -l'
@@ -77,15 +72,16 @@ alias now='date +"%T"'
 alias nowtime=now
 alias nowdate='date +"%d-%m-%Y"'
 
+alias edit='subl'
+
 # Set vim as default
 alias vi='vim'
 alias svi='sudo vi'
 alias vis='vim "+set si"'
-alias edit='subl'
 
 # edit multiple files split horizontally or vertically
-alias e="vim -o "
-alias E="vim -O "
+alias evi="vim -o "
+alias Evi="vim -O "
 
 # do not delete / or prompt if deleting more than 3 files at a time #
 alias rm='rm -I --preserve-root'
@@ -101,7 +97,7 @@ alias chmod='chmod --preserve-root'
 alias chgrp='chgrp --preserve-root'
 
 grab() {
-	sudo chown -R ${USER} ${1:-.}
+	sudo chown -R $USER ${1:-.}
 }
 
 ## play video files in a current directory ##
@@ -148,13 +144,17 @@ alias ethtool="ethtool $wifiInterface"
 
 netinfo ()
 {
+	local interface=${1:-wlp2s0}
+	local inet=$(ifconfig $interface | awk '/inet / {print $2}')
+	local broadcast=$(ifconfig $interface | awk '/broadcast / {print $6}')
+	local netmask=$(ifconfig $interface | awk '/netmask / {print $4}')
+	local mac=$(ifconfig $interface | awk '/ether / {print $2}')
 	echo "--------------- Network Information ---------------"
-	/sbin/ifconfig | awk /'inet addr/ {print $2}'
-	/sbin/ifconfig | awk /'Bcast/ {print $3}'
-	/sbin/ifconfig | awk /'inet addr/ {print $4}'
-	/sbin/ifconfig | awk /'HWaddr/ {print $4,$5}'
-	myip=`lynx -dump -hiddenlinks=ignore -nolist http://checkip.dyndns.org:8245/ | sed '/^$/d; s/^[ ]*//g; s/[ ]*$//g' `
-	echo "${myip}"
+	echo "IP : $inet"
+	echo "Broadcast : $broadcast"
+	echo "Netmask : $netmask"
+	echo "MAC : $mac"
+	echo "External IP : `myip`"
 	echo "---------------------------------------------------"
 }
 
@@ -187,11 +187,11 @@ alias du='du -ch'
 
 ## nfsrestart  - must be root  ##
 ## refresh nfs mount / cache etc for Apache ##
-alias nfsrestart='sync && sleep 2 && /etc/init.d/httpd stop && umount netapp2:/exports/http && sleep 2 && mount -o rw,sync,rsize=32768,wsize=32768,intr,hard,proto=tcp,fsc natapp2:/exports /http/var/www/html &&  /etc/init.d/httpd start'
+alias nfsrestart='sync && sleep 2 && sudo /etc/init.d/httpd stop && sudo umount netapp2:/exports/http && sleep 2 && sudo mount -o rw,sync,rsize=32768,wsize=32768,intr,hard,proto=tcp,fsc natapp2:/exports /http/var/www/html && sudo /etc/init.d/httpd start'
 
 #Grabs the disk usage in the current directory
 #alias usage='du -ch | grep total'
-alias usage='du -ch 2> /dev/null |tail -1'
+alias usage='du -csh 2> /dev/null'
 #Gets the total disk usage on your machine
 alias totalusage='df -hl --total | grep total'
 #Shows the individual partition usages without the temporary memory values
@@ -201,12 +201,12 @@ alias partusage='df -hlT --exclude-type=tmpfs --exclude-type=devtmpfs'
 alias most='du -hsx * | sort -rh | head -10'
 # shoot the fat ducks in your current dir and sub dirs
 alias ducks='du -ck | sort -nr | head'
-#
+# find larges in /home directory
 alias mosthome='du -ah /home 2>/dev/null | sort -hr | head -n 10'
 
 # directory-size-date (remove the echo/blank line if you desire)
-alias dsd="echo;ls -Fla"
-alias dsdm="ls -FlAh | more"
+alias dsd="echo; ls -Fla"
+alias dsdl="ls -FlAh | less"
 # show directories only
 alias dsdd="ls -FlA | grep :*/"
 # show executables only
@@ -216,23 +216,11 @@ alias dsdnx="ls -FlA | grep -v \*"
 # order by date
 alias dsdt="ls -FlAtr "
 # dsd plus sum of file sizes
-alias dsdz="ls -Fla $1 $2 $3 $4 $5  | awk '{ print; x=x+\$5 } END { print \"total bytes = \",x }'"
+alias dsdz="ls -Fla $1 $2 $3 $4 $5 | awk '{ print; x=x+\$5 } END { print \"total bytes = \",x }'"
 # only file without an extension
 alias noext='dsd | egrep -v "\.|/"'
-# send pwd to titlebar in puttytel
-alias ttb='echo -ne "33]0;`pwd`07"'
-# send parameter to titlebar if given, else remove certain paths from pwd
-alias ttbx="titlebar"
-# titlebar
-if [ $# -lt 1 ]
-then
-    ttb=`pwd | sed -e 's+/projects/++' -e 's+/project01/++' -e 's+/project02/++' -e 's+/export/home/++' -e 's+/home/++'`
-else
-    ttb=$1
-fi
-#echo -ne "33]0;`echo $ttb`07"
+
 alias machine="echo you are logged in to ... `uname -a | cut -f2 -d' '`"
-alias info='clear;machine;pwd'
 
 alias clearx="echo -e '\\0033\\0143'"
 alias clear='printf "\\033c"'
@@ -245,7 +233,7 @@ alias indent='indent -st'
 
 # to find what symbols are pre-defined by the compiler
 # Note that this can be done simpler via: /usr/bin/gcc -E -dM /dev/null
-gcc_defines() { tmpfile="/tmp/foo$$.cpp"; echo "int main(){return 0;}" > $tmpfile; /usr/bin/gcc -E -dM $tmpfile; rm $tmpfile ; }
+gcc_defines() { tmpfile="/tmp/foo$$.cpp"; echo "int main(){return 0;}" > $tmpfile; gcc -E -dM $tmpfile; rm $tmpfile ; }
 
 # count lines of java code under the current directory
 alias count_java='find . -name "*.java" -print0 | xargs -0 wc'
@@ -265,9 +253,6 @@ alias cpan='sudo perl -MCPAN -e shell'
 # testmod: test to see if a Perl module is installed. Sample usage: testmod LWP
 # a possible alternative implemention: perldoc -l \!*
 testmod() { perl -e "use $@" ; }
-
-# viperl: use vi to edit a file in ~/Dev/Perl
-viperl() { /usr/bin/vi ~/Dev/Perl/"$@" ; }
 
 # perlsh: run Perl as a shell (for testing commands)
 alias perlsh='perl -de 42'
@@ -299,18 +284,28 @@ osacompile_rsrc() { osacompile -x -r scpt:128 -o $1 $1; }
 #-----------
 # Searching:
 #-----------
-# ff:  to find a file under the current directory
-ff() { /usr/bin/find . -name "$@" ; }
-# ffs: to find a file whose name starts with a given string
-ffs() { /usr/bin/find . -name "$@"'*' ; }
-# ffe: to find a file whose name ends with a given string
-ffe() { /usr/bin/find . -name '*'"$@" ; }
+#
+# color grep results
+GREP_OPTIONS="$colorflag "
+
+if echo | grep --exclude-dir=.cvs "" >/dev/null 2>&1; then
+    GREP_OPTIONS+="--exclude-dir={\.bzr,\.cvs,\.git,\.hg,\.svn} "
+elif echo | grep --exclude=.cvs "" >/dev/null 2>&1; then
+    GREP_OPTIONS+="--exclude={\.bzr,\.cvs,\.git,\.hg,\.svn} "
+fi
+
+# export grep settings
+alias grep="grep $GREP_OPTIONS"
+
+# clean up
+unset colorflag
+unset GREP_OPTIONS
 
 # grepfind: to grep through files found by find, e.g. grepf pattern '*.c'
 # note that 'grep -r pattern dir_name' is an alternative if want all files
 grepfind() {
-	[ -z "$3" ] && find . -type f -name "$2" -print0 | xargs -0 grep -n "$1" | awk '!/.svn/' ;
-    [ -n "$3" ] && find "$3" -type f -name "$2" -print0 | xargs -0 grep -n "$1" | awk '!/.svn/' ;
+    [ -z "$3" ] && find . -type f -name "$2" -print0 | xargs -0 grep -n "$1";
+    [ -n "$3" ] && find "$3" -type f -name "$2" -print0 | xargs -0 grep -n "$1";
 }
 # I often can't recall what I named this alias, so make it work either way:
 alias findgrep='grepfind'
@@ -340,26 +335,30 @@ find_larger() { find . -type f -size +${1}c ; }
 # find . -name "*.java" -print0 | xargs -0 -J % cp % destinationFolder
 
 # findword: search for a word in the Unix word list
-findword() { /usr/bin/grep ^"$@"$ /usr/share/dict/words ; }
+findword() { grep ^"$@"$ /usr/share/dict/words ; }
 
-# dict: lookup a word with Dictionary.app
-dict() { open dict:///"$@" ; }
-
+## more intelligent acking for ubuntu users
+if which ack-grep &> /dev/null; then
+  alias afind='ack-grep -il'
+  alias acking='ACK_PAGER_COLOR="less -x4SRFX" ack-grep -a'
+else
+  alias afind='ack -il'
+fi
 
 #---------------
 # Text handling:
 #---------------
 # fixlines: edit files in place to ensure Unix line-endings
-fixlines() { /usr/bin/perl -pi~ -e 's/\r\n?/\n/g' "$@" ; }
+fixlines() { perl -pi~ -e 's/\r\n?/\n/g' "$@" ; }
 
 # cut80: truncate lines longer than 80 characters (for use in pipes)
-alias cut80='/usr/bin/cut -c 1-80'
+alias cut80='cut -c 1-80'
 
 # foldpb: make text in clipboard wrap so as to not exceed 80 characters
 alias foldpb='pbpaste | fold -s | pbcopy'
 
 # enquote: surround lines with quotes (useful in pipes) - from mervTormel
-enquote() { /usr/bin/sed 's/^/"/;s/$/"/' ; }
+enquote() { sed 's/^/"/;s/$/"/' ; }
 
 # casepat: generate a case-insensitive pattern
 casepat() { perl -pe 's/([a-zA-Z])/sprintf("[%s%s]",uc($1),$1)/ge' ; }
@@ -389,7 +388,7 @@ allStrings () { cat "$1" | tr -d "\0" | strings ; }
 #------------
 # Processes:
 #------------
-alias pstree='/sw/bin/pstree -g 2 -w'
+alias pstree='pstree -g 2 -w'
 
 # findPid: find out the pid of a specified process
 #    Note that the command name can be specified via a regex
@@ -446,6 +445,10 @@ alias sourcea='source ~/.aliases.sh'
 # Correct common typos:
 #-----------------------
 alias mann='man'
+alias givm='gvim'
+alias cta='cat'
+alias gerp='grep'
+alias sl='ls'
 
 #------------------------------
 # Terminal & shell management:
@@ -458,8 +461,6 @@ alias cic='set completion-ignore-case On'
 
 # show_options: display bash options settings
 alias show_options='shopt'
-
-alias acking='ACK_PAGER_COLOR="less -x4SRFX" /usr/bin/ack-grep -a'
 
 alias reboot='echo "Please use reboot_linux as this has been aliased to prevent accidental reboot"'
 alias reboot_linux='/sbin/reboot'
