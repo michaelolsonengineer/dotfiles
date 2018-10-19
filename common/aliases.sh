@@ -40,13 +40,12 @@ alias ls="ls $colorflag"
 
 ## Use long listing format ##
 alias ll="ls -alF $colorflag"
-alias lll="ll | less"
 alias la="ls -A $colorflag"
+alias l.="ls -d .* $colorflag"       # Show hidden files only
 alias l="ls -CF $colorflag"
-
-## Show hidden files ##
-alias l.="ls -d .* $colorflag"
-alias lld="ll | grep ^d $colorflag"
+alias lll="ll | less"                # Put output in less editor
+alias llf="ll | grep '^[-l]'"        # Show soft links only
+alias lld="ll | grep ^d $colorflag"  # Show directories only
 
 ## get rid of command not found ##
 alias cd..='cd ..'
@@ -65,6 +64,7 @@ alias diff='colordiff'
 
 # handy short cuts #
 alias h='history'
+[ "$CURRENT_SHELL" = zsh ] && alias h='history 0'
 alias j='jobs -l'
 
 alias path=`echo -e ${PATH//:/\\n}`
