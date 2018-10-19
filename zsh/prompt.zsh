@@ -3,11 +3,11 @@
 
 # needed to get things like current git branch
 autoload -Uz vcs_info
-zstyle ':vcs_info:*' enable git # You can add hg too if needed: `git hg`
-zstyle ':vcs_info:git*' use-simple true
-zstyle ':vcs_info:git*' max-exports 2
-zstyle ':vcs_info:git*' formats ' %b' 'x%R'
-zstyle ':vcs_info:git*' actionformats ' %b|%a' 'x%R'
+zstyle ':vcs_info:*' enable git svn # You can add hg too if needed: `git hg`
+zstyle ':vcs_info:(git|svn)*' use-simple true
+zstyle ':vcs_info:(git|svn)*' max-exports 2
+zstyle ':vcs_info:(git|svn)*' formats ' %b' 'x%R'
+zstyle ':vcs_info:(git|svn)*' actionformats ' %b|%a' 'x%R'
 
 autoload colors && colors
 
@@ -24,12 +24,34 @@ git_dirty() {
     fi
 }
 
+svn_dirty() {
+    local svninfo=$(command svn info . 2>/dev/null | grep -F "Working Copy Root Path:" |  sed -e "s/^Working Copy Root Path:\s*//"  &>/dev/null)
+    [[ $svninfo =~ warning ]] && return
+    [[ $svninfo =~ error ]] && return
+    local dirty=$(command svn status . 2>/dev/null | grep -e "^M" -e "^A" -e "^D" -e "^C" -e "^~" -e "^\!" 2>/dev/null);
+    if [ -n "$dirty" ]; then
+        echo "%F{red}✗%f"
+    else
+        echo "%F{green}✔%f"
+    fi
+}
+
 upstream_branch() {
     remote=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD)) 2>/dev/null
     if [[ $remote != "" ]]; then
         echo "%F{241}($remote)%f"
     fi
-}
+
+
+parse_svn_branch() {
+  local svnRootPath=$(command svn info . 2>/dev/null | grep -F "Working Copy Root Path:" |  sed -e "s/^Working Copy Root Path:\s*//")
+  local svnBranch=""
+
+  if [ -n "$svnRootPath" ]; then
+    svnBranch=$(command svn info $svnRootPath | grep '^URL: '| sed --regexp-extended -e 's/^(.+)((trunk)|(release.*)|(branch.*))$/\2/g')
+    echo "svn:[$svnBranch]"
+  fi
+}}
 
 # get the status of the current branch and it's remote
 # If there are changes upstream, display a ⇣
@@ -76,4 +98,4 @@ precmd() {
 PROMPT_SYMBOL='❯'
 
 export PROMPT='%(?.%F{207}.%F{160})$PROMPT_SYMBOL%f '
-export RPROMPT='`git_dirty`%F{241}$vcs_info_msg_0_%f`git_arrows``suspended_jobs`'
+export RPROMPT='`git_dirty`%F{221}$vcs_info_msg_0_%f`git_arrows``suspended_jobs`'

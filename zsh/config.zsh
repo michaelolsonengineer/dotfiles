@@ -1,25 +1,42 @@
-setopt NO_BG_NICE
-setopt NO_HUP
-setopt NO_LIST_BEEP
-setopt LOCAL_OPTIONS
-setopt LOCAL_TRAPS
-#setopt IGNORE_EOF
-setopt PROMPT_SUBST
+setopt no_bg_nice
+setopt no_hup
+setopt no_list_beep
+setopt local_options
+setopt local_traps
+#setopt ignore_eof
 
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
+## Set prompt
+setopt prompt_subst
+
+setopt interactive_comments
+
+setopt complete_aliases
+
+# Enable command spell checks
+setopt correct
+
+## History file configuration
+[ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
 SAVEHIST=10000
 
-# history
-setopt HIST_VERIFY
-setopt EXTENDED_HISTORY
-setopt HIST_REDUCE_BLANKS
-setopt SHARE_HISTORY
-setopt HIST_IGNORE_ALL_DUPS
-setopt INC_APPEND_HISTORY
-setopt APPEND_HISTORY
+## History command configuration
+setopt extended_history       # record timestamp of command in HISTFILE
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt hist_ignore_dups       # ignore duplicated commands history list
+setopt hist_ignore_space      # ignore commands that start with space
+setopt hist_verify            # show command with history expansion to user before running it
+setopt share_history          # share command history data
+setopt inc_append_history     # add commands to HISTFILE in order of execution
+setopt append_history
+setopt hist_reduce_blanks
+setopt hist_ignore_all_dups
 
-setopt COMPLETE_ALIASES
+autoload -U history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^[p" history-beginning-search-backward-end
+bindkey "^[n" history-beginning-search-forward-end
 
 # make terminal command navigation sane again
 bindkey '^[^[[D' backward-word

@@ -15,6 +15,18 @@ git_dirty() {
     fi
 }
 
+svn_dirty() {
+    local svninfo=$(command svn info . 2>/dev/null | grep -F "Working Copy Root Path:" |  sed -e "s/^Working Copy Root Path:\s*//"  &>/dev/null)
+    [[ $svninfo =~ warning ]] && return
+    [[ $svninfo =~ error ]] && return
+    local dirty=$(command svn status . 2>/dev/null | grep -e "^M" -e "^A" -e "^D" -e "^C" -e "^~" -e "^\!" 2>/dev/null);
+    if [ -n "$dirty" ]; then
+        echo "${PROMPT_RED}✗"
+    else
+        echo "${PROMPT_GREEN}✔"
+    fi
+}
+
 upstream_branch() {
     local remote=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD)) 2>/dev/null
     if [ -n $remote ]; then
@@ -99,7 +111,6 @@ fi
 # export RPROMPT='`git_dirty`%F{241}$vcs_info_msg_0_%f`git_arrows``suspended_jobs`'
 
 if [ "$color_prompt" = yes ]; then
-    GIT_DIRTY=$(git_dirty)
     #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     #PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[01;37m\]@\[\033[01;36m\]\h \[\033[01;34m\]\w \[\033[01;32m\]\$(parse_git_branch)\[\033[m\]\n\$ "
     PS1="${debian_chroot:+($debian_chroot)}${PROMPT_PURPLE}\s"         # \s the name of the shell
@@ -107,15 +118,15 @@ if [ "$color_prompt" = yes ]; then
     PS1="$PS1 ${PROMPT_L_GREEN}\u${PROMPT_WHITE}@${PROMPT_L_CYAN}\h"   # \u the username of the current user
                                                                        # \h the hostname up to the first part
     PS1="$PS1 ${PROMPT_L_BLUE}\w"                                      # \w the current working directory, with $HOME abbreviated with a tilde
-    PS1="$PS1 ${PROMPT_L_GREEN}\$(parse_git_branch)${GIT_DIRTY}"
-    PS1="$PS1 ${PROMPT_YELLOW}\$(parse_svn_branch)"
-    PS1="$PS1 ${PROMPT_WHITE}\$(suspended_jobs)"
-    PS1="$PS1 ${PROMPT_NORMAL}\n\$ "                                   # return to system default
+    PS1="$PS1 ${PROMPT_L_GREEN}`parse_git_branch``git_dirty`"
+    PS1="$PS1 ${PROMPT_YELLOW}`parse_svn_branch``svn_dirty`"
+    PS1="$PS1 ${PROMPT_WHITE}`suspended_jobs`"
+    PS1="$PS1 ${PROMPT_NORMAL}\n\$❯ "                                   # return to system default
                                                                        # \n the newline character
                                                                        # \$ if the effective UID is 0, a #, otherwise a $
 else
     #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-    PS1="${debian_chroot:+($debian_chroot)}\s \t      \u@\h:\w      \$(parse_git_branch) \$(parse_svn_branch) \n\$ "
+    PS1="${debian_chroot:+($debian_chroot)}\s \t      \u@\h:\w      `parse_git_branch` `parse_svn_branch` \n\$ "
 fi
 unset color_prompt force_color_prompt
 

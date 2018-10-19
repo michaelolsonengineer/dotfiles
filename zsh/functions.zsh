@@ -10,11 +10,11 @@ function open_command() {
     darwin*)  open_cmd='open' ;;
     cygwin*)  open_cmd='cygstart' ;;
     linux*)   if ! [[ $(uname -a) =~ "Microsoft" ]]; then
-                open_cmd='xdg-open' 
+                open_cmd='xdg-open'
               else
                 open_cmd='cmd.exe /c start ""'
-                if [ -e "$1" ]; then 
-                    1="$(wslpath -w "${1:a}")" || return 1 
+                if [ -e "$1" ]; then
+                    1="$(wslpath -w "${1:a}")" || return 1
                 fi
               fi
               ;;
@@ -118,6 +118,14 @@ function escape() {
 function unidecode() {
     perl -e "binmode(STDOUT, ':utf8'); print \"$@\""
     echo # newline
+}
+
+up() {
+    ups=""
+    for i in $(seq 1 $1); do
+        ups=$ups"../"
+    done
+    cd $ups
 }
 
 # Extract archives - use: extract <file>
