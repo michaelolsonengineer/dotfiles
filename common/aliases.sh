@@ -18,9 +18,8 @@ else # OS X `ls`
     colorflag="-G"
 fi
 
-alias svnstat="svn status | grep '^M'"
-
-alias kitten='pygmentize -g'
+alias pyg='pygmentize'
+alias kitten='pyg -g'
 
 # Alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -31,9 +30,13 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 alias c='clear'
 
+alias h='history'
+[ "$CURRENT_SHELL" = zsh ] && alias h='history 0'
+
 alias grep="grep $colorflag"
 alias fgrep="fgrep $colorflag"
 alias egrep="egrep $colorflag"
+alias hgrep="h | grep $colorflag"
 
 ## Colorize the ls output ##
 alias ls="ls $colorflag"
@@ -63,8 +66,6 @@ alias bc='bc -l'
 alias diff='colordiff'
 
 # handy short cuts #
-alias h='history'
-[ "$CURRENT_SHELL" = zsh ] && alias h='history 0'
 alias j='jobs -l'
 
 alias path=`echo -e ${PATH//:/\\n}`
