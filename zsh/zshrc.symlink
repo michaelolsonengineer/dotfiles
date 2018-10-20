@@ -10,24 +10,10 @@ command_exists() {
 export REPORTTIME=10
 
 [ -e ~/.terminfo ] && export TERMINFO_DIRS=$HOME/.terminfo:/usr/share/terminfo
-[ -z "$TMUX" ] && export TERM=xterm-256color-italic
 
 # define the code directory
 # This is where my code exists and where I want the `c` autocomplete to work from exclusively
-if [[ -d $HOME/code ]]; then
-    export CODE_DIR=$HOME/code
-fi
-
-# source all .zsh files inside of the zsh/ directory
-for config ($ZSH/**/*.zsh) source $config
-
-if [[ -a ~/.personalrc ]]; then
-    source ~/.personalrc
-fi
-
-if [[ -a ~/.localrc ]]; then
-    source ~/.localrc
-fi
+[ -d $HOME/code ] && export CODE_DIR=$HOME/code
 
 # initialize autocomplete
 autoload -U compinit add-zsh-hook
@@ -48,13 +34,15 @@ for config in $(ls $DOTFILES/common/*.sh); do
     source $config
 done
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-  export GIT_EDITOR='vim'
-else
-  export EDITOR='vim'
-  export GIT_EDITOR='vim'
+# source all .zsh files inside of the zsh/ directory
+for config ($ZSH/**/*.zsh) source $config
+
+if [[ -a ~/.personalrc ]]; then
+    source ~/.personalrc
+fi
+
+if [[ -a ~/.localrc ]]; then
+    source ~/.localrc
 fi
 
 [ -z "$TMUX" ] && export TERM=xterm-256color-italic
@@ -64,7 +52,7 @@ if command_exists rbenv; then
     eval "$(rbenv init -)"
 fi
 
-if [[ -d ~/.rvm ]]; then
+if [ -d ~/.rvm ]; then
     PATH=$HOME/.rvm/bin:$PATH # Add RVM to PATH for scripting
     source ~/.rvm/scripts/rvm
 fi
@@ -81,6 +69,10 @@ if [ -z "$RELOAD" ]; then
     if ! [ type "zplug" > /dev/null 2>&1 ]; then
         source ~/.zplug/init.zsh
     fi
+fi
+
+if hash brew 2>/dev/null; then
+    source `brew --prefix`/etc/profile.d/z.sh
 fi
 
 # User configuration
@@ -180,7 +172,7 @@ export MAVEN_OPTS
 # Qt environment
 export QTVER=qt5
 export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
-export QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms
+export QT_QPA_PLATFORM_PLUGIN_PATH=$QT_PLUGIN_PATH/platforms
 
 # NPM environment
 # https://github.com/sindresorhus/guides/blob/master/npm-global-without-sudo.md

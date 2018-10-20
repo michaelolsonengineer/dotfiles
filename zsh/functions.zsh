@@ -2,7 +2,7 @@
 # functions
 ####################
 
-function open_command() {
+open_command() {
   local open_cmd
 
   # define the open command
@@ -35,7 +35,7 @@ function open_command() {
 alias o="open_command"
 
 # print available colors and their numbers
-function colours() {
+colours() {
     for i in {0..255}; do
         printf "\x1b[38;5;${i}m colour${i}"
         if (( $i % 5 == 0 )); then
@@ -47,41 +47,41 @@ function colours() {
 }
 
 # Create a new directory and enter it
-function md() {
+md() {
     mkdir -p "$@" && cd "$@"
 }
 
-function hist() {
-    history | awk '{a[$2]++}END{for(i in a){print a[i] " " i}}' | sort -rn | head
+hist() {
+    history 0 | awk '{a[$2]++}END{for(i in a){print a[i] " " i}}' | sort -rn | head
 }
 
 # find shorthand
-function f() {
+f() {
     find . -name "$1"
 }
 
-function ng-stop() {
+ng-stop() {
     sudo launchctl stop homebrew.mxcl.nginx
 }
 
-function ng-start() {
+ng-start() {
     sudo launchctl start homebrew.mxcl.nginx
 }
-function ng-restart() {
+ng-restart() {
      sudo launchctl start homebrew.mxcl.nginx
 }
 
-function dns-restart() {
+dns-restart() {
     sudo launchctl stop homebrew.mxcl.dnsmasq
     sudo launchctl start homebrew.mxcl.dnsmasq
 }
 
-function pretty() {
+pretty() {
     pygmentize -f terminal256 $* | less -R
 }
 
 # Start an HTTP server from a directory, optionally specifying the port
-function server() {
+server() {
     local port="${1:-8000}"
     open "http://localhost:${port}/"
     # Set the default Content-Type to `text/plain` instead of `application/octet-stream`
@@ -90,13 +90,13 @@ function server() {
 }
 
 # take this repo and copy it to somewhere else minus the .git stuff.
-function gitexport(){
+gitexport() {
     mkdir -p "$1"
     git archive master | tar -x -C "$1"
 }
 
 # get gzipped size
-function gz() {
+gz() {
     echo "orig size    (bytes): "
     cat "$1" | wc -c
     echo "gzipped size (bytes): "
@@ -104,18 +104,18 @@ function gz() {
 }
 
 # All the dig info
-function digga() {
+digga() {
     dig +nocmd "$1" any +multiline +noall +answer
 }
 
 # Escape UTF-8 characters into their 3-byte format
-function escape() {
+escape() {
     printf "\\\x%s" $(printf "$@" | xxd -p -c1 -u)
     echo # newline
 }
 
 # Decode \x{ABCD}-style Unicode escape sequences
-function unidecode() {
+unidecode() {
     perl -e "binmode(STDOUT, ':utf8'); print \"$@\""
     echo # newline
 }
@@ -130,7 +130,7 @@ up() {
 
 # Extract archives - use: extract <file>
 # Credits to http://dotfiles.org/~pseup/.bashrc
-function extract() {
+extract() {
     if [ -f $1 ] ; then
         case $1 in
             *.tar.bz2)   tar xjf $1     ;;
@@ -153,7 +153,7 @@ function extract() {
 }
 
 # syntax highlight the contents of a file or the clipboard and place the result on the clipboard
-function hl() {
+hl() {
     if [ -z "$3" ]; then
         src=$( pbpaste )
     else
@@ -169,6 +169,6 @@ function hl() {
     echo $src | highlight -O rtf --syntax $1 --font Inconsoloata --style $style --line-number --font-size 24 | pbcopy
 }
 
-function command_exists() {
+command_exists() {
     type "$1" > /dev/null 2>&1
 }

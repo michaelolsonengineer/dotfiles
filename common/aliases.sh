@@ -462,5 +462,11 @@ alias cic='set completion-ignore-case On'
 # show_options: display bash options settings
 alias show_options='shopt'
 
+# tmux aliases
+alias ta='tmux attach'
+alias tls='tmux ls'
+alias tat='tmux attach -t'
+alias tns='tmux new-session -s'
+
 alias reboot='echo "Please use reboot_linux as this has been aliased to prevent accidental reboot"'
 alias reboot_linux='/sbin/reboot'

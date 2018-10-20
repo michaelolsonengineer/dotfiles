@@ -24,34 +24,12 @@ git_dirty() {
     fi
 }
 
-svn_dirty() {
-    local svninfo=$(command svn info . 2>/dev/null | grep -F "Working Copy Root Path:" |  sed -e "s/^Working Copy Root Path:\s*//"  &>/dev/null)
-    [[ $svninfo =~ warning ]] && return
-    [[ $svninfo =~ error ]] && return
-    local dirty=$(command svn status . 2>/dev/null | grep -e "^M" -e "^A" -e "^D" -e "^C" -e "^~" -e "^\!" 2>/dev/null);
-    if [ -n "$dirty" ]; then
-        echo "%F{red}✗%f"
-    else
-        echo "%F{green}✔%f"
-    fi
-}
-
 upstream_branch() {
     remote=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD)) 2>/dev/null
     if [[ $remote != "" ]]; then
         echo "%F{241}($remote)%f"
     fi
-
-
-parse_svn_branch() {
-  local svnRootPath=$(command svn info . 2>/dev/null | grep -F "Working Copy Root Path:" |  sed -e "s/^Working Copy Root Path:\s*//")
-  local svnBranch=""
-
-  if [ -n "$svnRootPath" ]; then
-    svnBranch=$(command svn info $svnRootPath | grep '^URL: '| sed --regexp-extended -e 's/^(.+)((trunk)|(release.*)|(branch.*))$/\2/g')
-    echo "svn:[$svnBranch]"
-  fi
-}}
+}
 
 # get the status of the current branch and it's remote
 # If there are changes upstream, display a ⇣
@@ -77,6 +55,65 @@ git_arrows() {
     echo $arrows
 }
 
+# vim:ft=zsh ts=2 sw=2 sts=2 et
+#
+# Faster alternative to the current SVN plugin implementation.
+#
+# Works with svn 1.6, 1.7, 1.8.
+# Use `svn_prompt_info` method to enquire the svn data.
+# It's faster because his efficient use of svn (single svn call) which saves a lot on a huge codebase
+# It displays the current status of the local files (added, deleted, modified, replaced, or else...)
+#
+# Use as a drop-in replacement of the svn plugin not as complementary plugin
+svn_prompt_info() {
+  local info
+  info=$(svn info 2>&1) || return 1; # capture stdout and stderr
+  local repo_need_upgrade=$(svn_repo_need_upgrade $info)
+
+  if [ -n $repo_need_upgrade ]; then
+    printf '%s%s%s%s%s%s%s\n' \
+      $PROMPT_BASE_COLOR \
+      $SVN_PROMPT_PREFIX \
+      $PROMPT_BASE_COLOR \
+      $repo_need_upgrade \
+      $PROMPT_BASE_COLOR \
+      $SVN_PROMPT_SUFFIX \
+      $PROMPT_BASE_COLOR
+  else
+    printf '%s%s%s %s%s:%s%s%s%s%s' \
+      $PROMPT_BASE_COLOR \
+      $SVN_PROMPT_PREFIX \
+      \
+      "$(svn_status_info $info)" \
+      $PROMPT_BASE_COLOR \
+      \
+      $BRANCH_NAME_COLOR \
+      $(svn_current_branch_name $info) \
+      $PROMPT_BASE_COLOR \
+      \
+      $(svn_current_revision $info) \
+      $PROMPT_BASE_COLOR \
+      \
+      $SVN_PROMPT_SUFFIX \
+      $PROMPT_BASE_COLOR
+  fi
+}
+
+prompt_svn() {
+    local rev branch
+    if in_svn; then
+        rev=$(svn_get_rev_nr)
+        branch=$(svn_get_branch_name)
+        if [[ $(svn_dirty_choose_pwd 1 0) -eq 1 ]]; then
+            prompt_segment yellow black
+            echo -n "$rev@$branch"
+            echo -n "±"
+        else
+            prompt_segment green black
+            echo -n "$rev@$branch"
+        fi
+    fi
+}
 
 # indicate a job (for example, vim) has been backgrounded
 # If there is a job in the background, display a ✱
@@ -99,3 +136,13 @@ PROMPT_SYMBOL='❯'
 
 export PROMPT='%(?.%F{207}.%F{160})$PROMPT_SYMBOL%f '
 export RPROMPT='`git_dirty`%F{221}$vcs_info_msg_0_%f`git_arrows``suspended_jobs`'
+
+# build_prompt() {
+#     RETVAL=$?
+#     prompt_status
+#     prompt_context
+#     prompt_dir
+#     prompt_git
+#     prompt_svn
+#     prompt_end
+# }
