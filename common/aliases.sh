@@ -205,19 +205,19 @@ alias ducks='du -ck | sort -nr | head'
 # find larges in /home directory
 alias mosthome='du -ah /home 2>/dev/null | sort -hr | head -n 10'
 
-# directory-size-date (remove the echo/blank line if you desire)
-alias dsd="echo; ls -Fla"
-alias dsdl="ls -FlAh | less"
+# directory-size-date
+alias dsd="ls -FlAh"
+alias dsdl="dsd | less"
 # show directories only
-alias dsdd="ls -FlA | grep :*/"
+alias dsdd="dsd | grep :*/"
 # show executables only
-alias dsdx="ls -FlA | grep \*"
+alias dsdx="dsd | grep \*"
 # show non-executables
-alias dsdnx="ls -FlA | grep -v \*"
+alias dsdnx="dsd | grep -v \*"
 # order by date
-alias dsdt="ls -FlAtr "
+alias dsdt="dsd -tr"
 # dsd plus sum of file sizes
-alias dsdz="ls -Fla $1 $2 $3 $4 $5 | awk '{ print; x=x+\$5 } END { print \"total bytes = \",x }'"
+alias dsdz="dsd $1 $2 $3 $4 $5 | awk '{ print; x=x+\$5 } END { print \"total bytes = \",x }'"
 # only file without an extension
 alias noext='dsd | egrep -v "\.|/"'
 
