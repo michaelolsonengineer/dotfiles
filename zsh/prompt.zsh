@@ -127,10 +127,14 @@ suspended_jobs() {
     fi
 }
 
-precmd() {
-    vcs_info
-    print -P '\n%F{6}%~'
-}
+case $TERM in
+  xterm*)
+    precmd () {
+      vcs_info
+      print -Pn "\e]0;zsh- %n@%m: %~\a"
+    }
+    ;;
+esac
 
 PROMPT_SYMBOL='❯'
 
