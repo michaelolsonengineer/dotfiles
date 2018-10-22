@@ -22,8 +22,9 @@ else # OS X `ls`
     colorflag="-G"
 fi
 
+# handy short cuts #
+alias j='jobs -l'
 alias c='clear'
-
 alias h='history'
 [ "$CURRENT_SHELL" = zsh ] && alias h='history 0'
 
@@ -37,13 +38,12 @@ alias kitten='pyg -g'
 # Aliases and this file:
 #--------------------------------------------
 
-alias ralias="source $HOME/.aliases.sh"
+# sourcea | realias: to source this file (to make changes active after editing)
+alias sourcea="source $HOME/.aliases.sh"
+alias realias="sourcea"
 
 # showa: to remind yourself of an alias (given some part of it)
 showa() { grep -i -a1 $@ $HOME/.aliases.sh | grep -v '^\s*$' ; }
-
-# sourcea: to source this file (to make changes active after editing)
-alias sourcea="ralias"
 
 #-----------
 # Searching:
@@ -111,26 +111,6 @@ alias fgrep="fgrep $colorflag"
 alias egrep="egrep $colorflag"
 alias hgrep="h | grep $colorflag"
 
-#------------------------------
-# Terminal & shell management:
-#------------------------------
-
-# fix_stty: restore terminal settings when they get completely screwed up
-alias fix_stty='stty sane'
-
-# cic: make tab-completion case-insensitive
-alias cic='set completion-ignore-case On'
-
-# show_options: display bash options settings
-alias show_options='shopt'
-
-alias reboot='echo "Please use reboot_linux as this has been aliased to prevent accidental reboot"'
-alias reboot_linux='/sbin/reboot'
-
-alias machine="echo you are logged in to ... `uname -a | cut -f2 -d' '`"
-
-alias clearx="echo -e '\\0033\\0143'"
-alias clear='printf "\\033c"'
 
 #--------------------------
 # File & folder management:
@@ -197,17 +177,38 @@ grab() {
 	sudo chown -R $USER ${1:-.}
 }
 
+#------------------------------
+# Terminal & shell management:
+#------------------------------
+
+# fix_stty: restore terminal settings when they get completely screwed up
+alias fix_stty='stty sane'
+
+# cic: make tab-completion case-insensitive
+alias cic='set completion-ignore-case On'
+
+# show_options: display bash options settings
+alias show_options='shopt'
+
+alias reboot='echo "Please use reboot_linux as this has been aliased to prevent accidental reboot"'
+alias reboot_linux='/sbin/reboot'
+
+alias machine="echo you are logged in to ... `uname -a | cut -f2 -d' '`"
+
+alias clearx="echo -e '\\0033\\0143'"
+alias clear='printf "\\033c"'
+
 #-----------
 # Diffing:
 #-----------
 
 alias bc='bc -l'
 
-# install  colordiff package :)
+# install colordiff package :)
 alias diff='colordiff'
 
-# handy short cuts #
-alias j='jobs -l'
+# diff gui
+alias difftool='meld'
 
 #-----------
 # Time:
@@ -256,80 +257,53 @@ alias nplaymp3='for i in /nas/multimedia/mp3/*.mp3; do mplayer "$i"; done'
 # shuffle mp3/ogg etc by default #
 alias music='mplayer --shuffle *'
 
-#-------------
-# Networking:
-#-------------
+#------------
+# Processes:
+#------------
+# a = show processes for all users
+# u = display the process's user/owner
+# x = also show processes not attached to a terminal
+# f = ASCII art process hierarchy (forest)
+alias psall='ps auxf'
+alias psaux='psall'
 
-# IP addresses
-alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias myips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+## get top process eating cpu ##
+alias pscpu='psall | sort -nr -k 3'
+alias pscpu10='pscpu | head -10'
 
-# Stop after sending count ECHO_REQUEST packets #
-alias ping='ping -c 5'
-# Do not wait interval 1 second, go fast #
-alias fastping='ping -c 100 -s.2'
+alias pstree='pstree -g 2 -w'
 
-# Show open ports
-alias ports='netstat -tulanp'
+# findPid: find out the pid of a specified process
+#    Note that the command name can be specified via a regex
+#    E.g. findPid '/d$/' finds pids of all processes with names ending in 'd'
+#    Without the 'sudo' it will only find processes of the current user
+findpid() { sudo lsof -t -c "$@" ; }
 
-# Show open TCP connections
-alias checktcp='sudo lsof -i TCP'
+# to find memory hogs:
+alias mem_hogs_top='top -n 10'
+alias mem_hogs_ps='ps wwaxm -o pid,stat,vsize,rss,time,command | head -10'
 
-## All of our servers eth1 is connected to the Internets via vlan / router etc  ##
-wifiInterface=$(ifconfig -a | perl -nle'/(^w\w+)/ && print $1')
-alias dnstop="dnstop -l 5 $wifiInterface"
-alias vnstat="vnstat -i $wifiInterface"
-alias iftop="iftop -i $wifiInterface"
-alias tcpdump="tcpdump -i $wifiInterface"
-alias ethtool="ethtool $wifiInterface"
+# to find CPU hogs
+alias cpu_hogs='ps wwaxr -o pid,stat,%cpu,time,command | head -10'
 
-netinfo ()
-{
-	local interface=${1:-wlp2s0}
-	local inet=$(ifconfig $interface | awk '/inet / {print $2}')
-	local broadcast=$(ifconfig $interface | awk '/broadcast / {print $6}')
-	local netmask=$(ifconfig $interface | awk '/netmask / {print $4}')
-	local mac=$(ifconfig $interface | awk '/ether / {print $2}')
-	echo "--------------- Network Information ---------------"
-	echo "IP : $inet"
-	echo "Broadcast : $broadcast"
-	echo "Netmask : $netmask"
-	echo "MAC : $mac"
-	echo "External IP : `myip`"
-	echo "---------------------------------------------------"
+# continual 'top' listing (every 10 seconds) showing top 15 CPU consumers
+alias topforever='top -l 0 -s 10 -o cpu -n 15'
+
+# recommended 'top' invocation to minimize resources in thie macosxhints article
+# http://www.macosxhints.com/article.php?story=20060816123853639
+# exec /usr/bin/top -R -F -s 10 -o rsize
+
+# diskwho: to show processes reading/writing to disk
+alias diskwho='sudo iotop'
+
+psgrep() {
+	if [ ! -z $1 ] ; then
+		echo "Grepping for processes matching $1..."
+		psaux | grep $1 | grep -v grep
+	else
+		echo "!! Need name to grep for"; exit 1;
+	fi
 }
-
-# Nmap options are:
-#  -sS - TCP SYN scan
-#  -v - verbose
-#  -T1 - timing of scan. Options are paranoid (0), sneaky (1), polite (2), normal (3), aggressive (4), and insane (5)
-#  -sF - FIN scan (can sneak through non-stateful firewalls)
-#  -PE - ICMP echo discovery probe
-#  -PP - timestamp discovery probe
-#  -PY - SCTP init ping
-#  -g - use given number as source port
-#  -A - enable OS detection, version detection, script scanning, and traceroute (aggressive)
-#  -O - enable OS detection
-#  -sA - TCP ACK scan
-#  -F - fast scan
-#  --script=vulscan - also access vulnerabilities in target
-
-alias nmap_open_ports="nmap --open"
-alias nmap_list_interfaces="nmap --iflist"
-alias nmap_slow="nmap -sS -v -T1"
-alias nmap_fin="nmap -sF -v"
-alias nmap_full="nmap -sS -T4 -PE -PP -PS80,443 -PY -g 53 -A -p1-65535 -v"
-alias nmap_check_for_firewall="nmap -sA -p1-65535 -v -T4"
-alias nmap_ping_through_firewall="nmap -PS -PA"
-alias nmap_fast="nmap -F -T5 --version-light --top-ports 300"
-alias nmap_detect_versions="nmap -sV -p1-65535 -O --osscan-guess -T4 -Pn"
-alias nmap_check_for_vulns="nmap --script=vulscan"
-alias nmap_full_udp="nmap -sS -sU -T4 -A -v -PE -PS22,25,80 -PA21,23,80,443,3389 "
-alias nmap_traceroute="nmap -sP -PE -PS22,25,80 -PA21,23,80,3389 -PU -PO --traceroute "
-alias nmap_full_with_scripts="sudo nmap -sS -sU -T4 -A -v -PE -PP -PS21,22,23,25,80,113,31339 -PA80,113,443,10042 -PO --script all "
-alias nmap_web_safe_osscan="sudo nmap -p 80,443 -O -v --osscan-guess --fuzzy "
-
-
 
 #-----------
 # Memory:
@@ -339,12 +313,8 @@ alias nmap_web_safe_osscan="sudo nmap -p 80,443 -O -v --osscan-guess --fuzzy "
 alias meminfo='free -m -l -t'
 
 ## get top process eating memory
-alias psmem='ps auxf | sort -nr -k 4'
-alias psmem10='ps auxf | sort -nr -k 4 | head -10'
-
-## get top process eating cpu ##
-alias pscpu='ps auxf | sort -nr -k 3'
-alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+alias psmem='psall | sort -nr -k 4'
+alias psmem10='psall | sort -nr -k 4 | head -10'
 
 ## Get server cpu info ##
 alias cpuinfo='lscpu'
@@ -353,21 +323,13 @@ alias cpuinfo='lscpu'
 ##alias cpuinfo='less /proc/cpuinfo' ##
 
 ## get GPU ram on desktop / laptop##
-alias gpumeminfo='grep -i --color memory /var/log/Xorg.0.log'
-
-## this one saved by butt so many times ##
-alias wget='wget -c'
+alias gpumeminfo="grep -i $colorflag memory /var/log/Xorg.0.log"
 
 ## set some other defaults ##
 alias df='df -H'
 alias du='du -ch'
 
-## nfsrestart  - must be root  ##
-## refresh nfs mount / cache etc for Apache ##
-alias nfsrestart='sync && sleep 2 && sudo /etc/init.d/httpd stop && sudo umount netapp2:/exports/http && sleep 2 && sudo mount -o rw,sync,rsize=32768,wsize=32768,intr,hard,proto=tcp,fsc natapp2:/exports /http/var/www/html && sudo /etc/init.d/httpd start'
-
 #Grabs the disk usage in the current directory
-#alias usage='du -ch | grep total'
 alias usage='du -csh 2> /dev/null'
 #Gets the total disk usage on your machine
 alias totalusage='df -hl --total | grep total'
@@ -484,43 +446,6 @@ allStrings () { pyg "$1" | tr -d "\0" | strings ; }
 joins () { (IFS=$1; shift; echo "$*"); }
 alias perljoin="perl -E 'say join(shift, @ARGV)'"
 
-#------------
-# Processes:
-#------------
-alias pstree='pstree -g 2 -w'
-
-# findPid: find out the pid of a specified process
-#    Note that the command name can be specified via a regex
-#    E.g. findPid '/d$/' finds pids of all processes with names ending in 'd'
-#    Without the 'sudo' it will only find processes of the current user
-findPid() { sudo lsof -t -c "$@" ; }
-
-# to find memory hogs:
-alias mem_hogs_top='top -n 10'
-alias mem_hogs_ps='ps wwaxm -o pid,stat,vsize,rss,time,command | head -10'
-
-# to find CPU hogs
-alias cpu_hogs='ps wwaxr -o pid,stat,%cpu,time,command | head -10'
-
-# continual 'top' listing (every 10 seconds) showing top 15 CPU consumers
-alias topforever='top -l 0 -s 10 -o cpu -n 15'
-
-# recommended 'top' invocation to minimize resources in thie macosxhints article
-# http://www.macosxhints.com/article.php?story=20060816123853639
-# exec /usr/bin/top -R -F -s 10 -o rsize
-
-# diskwho: to show processes reading/writing to disk
-alias diskwho='sudo iotop'
-
-psgrep() {
-	if [ ! -z $1 ] ; then
-		echo "Grepping for processes matching $1..."
-		ps aux | grep $1 | grep -v grep
-	else
-		echo "!! Need name to grep for"
-	fi
-}
-
 #-----------------------
 # Correct common typos:
 #-----------------------
@@ -549,6 +474,92 @@ alias tls='tmux ls'
 alias tat='tmux attach -t'
 alias tns='tmux new-session -s'
 
-# clean up
+#-------------
+# Networking:
+#-------------
+
+# IP addresses
+alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias myips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+
+# Stop after sending count ECHO_REQUEST packets #
+alias ping='ping -c 5'
+# Do not wait interval 1 second, go fast #
+alias fastping='ping -c 100 -s.2'
+
+# Show open ports
+alias ports='netstat -tulanp'
+
+# Show open TCP connections
+alias checktcp='sudo lsof -i TCP'
+
+## All of our servers eth1 is connected to the Internets via vlan / router etc  ##
+wifiInterface=$(ifconfig -a | perl -nle'/(^w\w+)/ && print $1')
+alias dnstop="dnstop -l 5 $wifiInterface"
+alias vnstat="vnstat -i $wifiInterface"
+alias iftop="iftop -i $wifiInterface"
+alias tcpdump="tcpdump -i $wifiInterface"
+alias ethtool="ethtool $wifiInterface"
+
+netinfo ()
+{
+	local interface=${1:-wlp2s0}
+	local inet=$(ifconfig $interface | awk '/inet / {print $2}')
+	local broadcast=$(ifconfig $interface | awk '/broadcast / {print $6}')
+	local netmask=$(ifconfig $interface | awk '/netmask / {print $4}')
+	local mac=$(ifconfig $interface | awk '/ether / {print $2}')
+	echo "--------------- Network Information ---------------"
+	echo "IP : $inet"
+	echo "Broadcast : $broadcast"
+	echo "Netmask : $netmask"
+	echo "MAC : $mac"
+	echo "External IP : `myip`"
+	echo "---------------------------------------------------"
+}
+
+# Nmap options are:
+#  -sS - TCP SYN scan
+#  -v - verbose
+#  -T1 - timing of scan. Options are paranoid (0), sneaky (1), polite (2), normal (3), aggressive (4), and insane (5)
+#  -sF - FIN scan (can sneak through non-stateful firewalls)
+#  -PE - ICMP echo discovery probe
+#  -PP - timestamp discovery probe
+#  -PY - SCTP init ping
+#  -g - use given number as source port
+#  -A - enable OS detection, version detection, script scanning, and traceroute (aggressive)
+#  -O - enable OS detection
+#  -sA - TCP ACK scan
+#  -F - fast scan
+#  --script=vulscan - also access vulnerabilities in target
+
+alias nmap_open_ports="nmap --open"
+alias nmap_list_interfaces="nmap --iflist"
+alias nmap_slow="nmap -sS -v -T1"
+alias nmap_fin="nmap -sF -v"
+alias nmap_full="nmap -sS -T4 -PE -PP -PS80,443 -PY -g 53 -A -p1-65535 -v"
+alias nmap_check_for_firewall="nmap -sA -p1-65535 -v -T4"
+alias nmap_ping_through_firewall="nmap -PS -PA"
+alias nmap_fast="nmap -F -T5 --version-light --top-ports 300"
+alias nmap_detect_versions="nmap -sV -p1-65535 -O --osscan-guess -T4 -Pn"
+alias nmap_check_for_vulns="nmap --script=vulscan"
+alias nmap_full_udp="nmap -sS -sU -T4 -A -v -PE -PS22,25,80 -PA21,23,80,443,3389 "
+alias nmap_traceroute="nmap -sP -PE -PS22,25,80 -PA21,23,80,3389 -PU -PO --traceroute "
+alias nmap_full_with_scripts="sudo nmap -sS -sU -T4 -A -v -PE -PP -PS21,22,23,25,80,113,31339 -PA80,113,443,10042 -PO --script all "
+alias nmap_web_safe_osscan="sudo nmap -p 80,443 -O -v --osscan-guess --fuzzy "
+
+#----------
+# Remote:
+#----------
+
+## this one saved by butt so many times ##
+alias wget='wget -c'
+
+## nfsrestart  - must be root  ##
+## refresh nfs mount / cache etc for Apache ##
+alias nfsrestart='sync && sleep 2 && sudo /etc/init.d/httpd stop && sudo umount netapp2:/exports/http && sleep 2 && sudo mount -o rw,sync,rsize=32768,wsize=32768,intr,hard,proto=tcp,fsc natapp2:/exports /http/var/www/html && sudo /etc/init.d/httpd start'
+
+#----------
+# Clean up:
+#----------
 unset colorflag
 unset GREP_OPTIONS

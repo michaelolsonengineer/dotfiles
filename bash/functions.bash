@@ -50,11 +50,11 @@ open_command() {
     darwin*)  open_cmd='open' ;;
     cygwin*)  open_cmd='cygstart' ;;
     linux*)   if ! [[ $(uname -a) =~ "Microsoft" ]]; then
-                open_cmd='xdg-open' 
+                open_cmd='xdg-open'
               else
                 open_cmd='cmd.exe /c start ""'
-                if [ -e "$1" ]; then 
-                    1="$(wslpath -w "${1:a}")" || return 1 
+                if [ -e "$1" ]; then
+                    1="$(wslpath -w "${1:a}")" || return 1
                 fi
               fi
               ;;
@@ -89,11 +89,13 @@ colours() {
 # find shorthand
 f() { find . -name "$@"; }
 # ff:  to find a file under the current directory
-ff() { find . -name "$@" ; }
+ff() { find . -type f -name "$@" ; }
 # ffs: to find a file whose name starts with a given string
-ffs() { find . -name "$@"'*' ; }
+ffs() { find . -type f -name "$@"'*' ; }
 # ffe: to find a file whose name ends with a given string
-ffe() { find . -name '*'"$@" ; }
+ffe() { find . -type f -name '*'"$@" ; }
+# ff:  to find a file under the current directory
+fdir() { find . -type d -name "$@" ; }
 
 pretty() {
     pygmentize -f terminal256 $* | less -R
