@@ -34,11 +34,11 @@ done
 # source all .zsh files inside of the zsh/ directory
 for config ($ZSH/**/*.zsh) source $config
 
-if [ -a ~/.personalrc ]; then
+if [ -e ~/.personalrc ]; then
     source ~/.personalrc
 fi
 
-if [ -a ~/.localrc ]; then
+if [ -e ~/.localrc ]; then
     source ~/.localrc
 fi
 
