@@ -481,7 +481,7 @@ allStrings () { pyg "$1" | tr -d "\0" | strings ; }
 # to convert a man page to PDF: man -t foo > foo.ps; open foo.ps; save as PDF
 
 # join strings
-sjoin () { (IFS=$1; shift; echo "$*"); }
+joins () { (IFS=$1; shift; echo "$*"); }
 alias perljoin="perl -E 'say join(shift, @ARGV)'"
 
 #------------

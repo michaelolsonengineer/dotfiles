@@ -4,7 +4,7 @@ function web_search() {
   local site=$1
   shift
   # join arguments passed with '+', then append to search engine URL
-  local siteSearchParams=$(sjoin + $@)
+  local siteSearchParams=$(joins + $@)
 
   # define search engine URLS
   declare -A urls
