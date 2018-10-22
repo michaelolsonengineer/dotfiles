@@ -496,6 +496,7 @@ alias givm='gvim'
 alias cta='cat'
 alias gerp='grep'
 alias sl='ls'
+alias hgrp='hgrep'
 
 #------------------------------
 # TMUX:
