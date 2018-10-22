@@ -52,7 +52,7 @@ fi
 
 # define the code directory
 # This is where my code exists and where I want the `c` autocomplete to work from exclusively
-if [[ -d $HOME/code ]]; then
+if [ -d $HOME/code ]; then
     export CODE_DIR=$HOME/code
 fi
 
@@ -111,7 +111,7 @@ if [ -f ~/.vim_runtime/install_awesome_vimrc.sh ]; then
 fi
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
+if [ -n $SSH_CONNECTION ]; then
     export EDITOR='vim'
     export GIT_EDITOR='vim'
 else
@@ -127,29 +127,6 @@ MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
 MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
 MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
 export MAVEN_OPTS
-
-# ssh
-SSH_ENV="$HOME/.ssh/environment"
-
-start_agent() {
-    echo "Initializing new SSH agent..."
-    /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "$SSH_ENV"
-    echo succeeded
-    chmod 600 "$SSH_ENV"
-    source "$SSH_ENV" > /dev/null
-    /usr/bin/ssh-add;
-}
-
-# Source SSH settings, if applicable
-# Note: `ps ${SSH_AGENT_PID}` doesnt work under cywgin
-if [ -f "$SSH_ENV" ]; then
-    source "$SSH_ENV" > /dev/null
-    ps -ef | grep $SSH_AGENT_PID | grep ssh-agent$ >/dev/null || {
-      start_agent;
-    }
-else
-    start_agent;
-fi
 
 #DISPLAYVAR=$SSH_CLIENT;
 #export DISPLAY=${DISPLAYVAR%% *}:0
