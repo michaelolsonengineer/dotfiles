@@ -13,7 +13,7 @@ elif [ "$CURRENT_SHELL" = "ash" ]; then
 fi
 
 # show environment path
-alias path=`echo -e ${PATH//:/\\n}`
+alias path="echo -e ${PATH//:/\\\\n}"
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`

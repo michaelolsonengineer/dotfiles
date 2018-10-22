@@ -6,9 +6,6 @@ command_exists() {
     type "$1" > /dev/null 2>&1
 }
 
-# display how long all tasks over 10 seconds take
-export REPORTTIME=10
-
 [ -e ~/.terminfo ] && export TERMINFO_DIRS=$HOME/.terminfo:/usr/share/terminfo
 
 # define the code directory
@@ -37,11 +34,11 @@ done
 # source all .zsh files inside of the zsh/ directory
 for config ($ZSH/**/*.zsh) source $config
 
-if [[ -a ~/.personalrc ]]; then
+if [ -a ~/.personalrc ]; then
     source ~/.personalrc
 fi
 
-if [[ -a ~/.localrc ]]; then
+if [ -a ~/.localrc ]; then
     source ~/.localrc
 fi
 
@@ -75,9 +72,12 @@ if hash brew 2>/dev/null; then
     source `brew --prefix`/etc/profile.d/z.sh
 fi
 
-# User configuration
+#---------------------
+# User configuration:
+#---------------------
 
-# export MANPATH="/usr/local/man:$MANPATH"
+# display how long all tasks over 10 seconds take
+export REPORTTIME=10
 
 # You may need to manually set your language environment
 # export LANG=en_US
@@ -86,54 +86,6 @@ fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
-
-# Java
-export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-
-# Maven
-export M2_HOME=/usr/share/maven
-export M2=$M2_HOME/bin
-MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
-MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
-MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
-export MAVEN_OPTS
-
-# ssh
-export SSH_KEY_PATH="~/.ssh/rsa_id"
-alias cleanSsh="if [ -d $HOME/.ssh ]; then
-    if [ -f $HOME/.ssh/known_hosts ]
-    then
-        echo 'removing SSH known Hosts - printing previous contents'
-        cat ~/.ssh/known_hosts
-        rm ~/.ssh/known_hosts
-        echo '.ssh directory should be cleared - printing its contents'
-        ls -la ~/.ssh
-    else
-        echo 'No known ssh hosts'
-    fi
-fi"
-
-SSH_ENV="$HOME/.ssh/environment"
-
-start_agent() {
-  echo "Initializing new SSH agent..."
-  /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "$SSH_ENV"
-  echo succeeded
-  chmod 600 "$SSH_ENV"
-  . "$SSH_ENV" > /dev/null
-  /usr/bin/ssh-add;
-}
-
-# Source SSH settings, if applicable
-# Note: `ps ${SSH_AGENT_PID}` doesnt work under cywgin
-if [ -f "$SSH_ENV" ]; then
-    source "$SSH_ENV" > /dev/null
-    ps -ef | grep $SSH_AGENT_PID | grep ssh-agent$ >/dev/null || {
-      start_agent;
-    }
-else
-    start_agent;
-fi
 
 #DISPLAYVAR=$SSH_CLIENT;
 #export DISPLAY=${DISPLAYVAR%% *}:0
@@ -145,6 +97,17 @@ export TERM_BOLD=$(tput smso)
 export TERM_RESET=$(tput rmso)
 export NUMBER_OF_CORES=$(/usr/bin/nproc || grep -c ^processor /proc/cpuinfo || echo "1")
 export HALF_NUMBER_OF_CORES=$(printf "%1.f" "$(($NUMBER_OF_CORES/2))")
+
+# Java
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+
+# Maven
+export M2_HOME=/usr/share/maven
+export M2=$M2_HOME/bin
+MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
+MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
+MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
+export MAVEN_OPTS
 
 # vim
 if [ -f ~/.vim_runtime/install_awesome_vimrc.sh ]; then
