@@ -131,7 +131,7 @@ case $TERM in
   xterm*)
     precmd () {
       vcs_info
-      print -Pn "\e]0;zsh- %n@%m: %~\a"
+      print -P "\e]0;zsh- %n@%m: %~\a\n%F{6}%~"
     }
     ;;
 esac
