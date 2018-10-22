@@ -61,9 +61,6 @@ fi
 # export grep settings
 alias grep="grep $GREP_OPTIONS"
 
-# clean up
-unset colorflag
-unset GREP_OPTIONS
 
 # grepfind: to grep through files found by find, e.g. grepf pattern '*.c'
 # note that 'grep -r pattern dir_name' is an alternative if want all files
@@ -506,3 +503,7 @@ alias ta='tmux attach'
 alias tls='tmux ls'
 alias tat='tmux attach -t'
 alias tns='tmux new-session -s'
+
+# clean up
+unset colorflag
+unset GREP_OPTIONS
