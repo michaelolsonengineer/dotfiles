@@ -34,12 +34,12 @@ done
 # source all .zsh files inside of the zsh/ directory
 for config ($ZSH/**/*.zsh) source $config
 
-if [ -e ~/.personalrc ]; then
-    source ~/.personalrc
+if [ -e $HOME/.privaterc ]; then
+    source $HOME/.privaterc
 fi
 
-if [ -e ~/.localrc ]; then
-    source ~/.localrc
+if [ -e $HOME/.personalrc ]; then
+    source $HOME/.personalrc
 fi
 
 [ -z "$TMUX" ] && export TERM=xterm-256color-italic

@@ -32,7 +32,14 @@ alias h='history'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(h |tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 alias pyg='pygmentize'
-alias kitten='pyg -g'
+alias mao='pyg -g'
+alias catc='pyg -l c'
+alias catpy='pyg -l python'
+alias catphp='pyg -l php'
+alias cathtml='pyg -l html'
+alias catbash='pyg -l bash'
+alias catzsh='pyg -l zsh'
+alias catsh='pyg -l sh'
 
 #--------------------------------------------
 # Aliases and this file:
@@ -125,8 +132,10 @@ alias la="ls -A $colorflag"
 alias l.="ls -d .* $colorflag"       # Show hidden files only
 alias l="ls -CF $colorflag"
 alias lll="ll | less"                # Put output in less editor
-alias llf="ll | grep '^[-l]'"        # Show soft links only
-alias lld="ll | grep ^d $colorflag"  # Show directories only
+alias llsoft="ll | grep '^[l]'"        # Show soft links only
+alias lls="llsoft"
+alias lldirectories="ll | grep ^d $colorflag"  # Show directories only
+alias lld="lldirectories"
 
 ## get rid of command not found ##
 alias cd..='cd ..'
@@ -154,11 +163,11 @@ alias dsdz="dsd $1 $2 $3 $4 $5 | awk '{ print; x=x+\$5 } END { print \"total byt
 # only file without an extension
 alias noext='dsd | egrep -v "\.|/"'
 
-# numFiles: number of (non-hidden) files in current directory
-alias numFiles='echo $(ls -1 | wc -l)'
+# numfiles: number of (non-hidden) files in current directory
+alias numfiles='echo $(ls -1 | wc -l)'
 
-# showTimes: show the modification, metadata-change, and access times of a file
-showTimes() { stat -f "%N:   %m %c %a" "$@" ; }
+# showtimes: show the modification, metadata-change, and access times of a file
+showtimes() { stat -f "%N:   %m %c %a" "$@" ; }
 
 # do not delete / or prompt if deleting more than 3 files at a time #
 alias rm='rm -I --preserve-root'
@@ -201,8 +210,6 @@ alias clear='printf "\\033c"'
 #-----------
 # Diffing:
 #-----------
-
-alias bc='bc -l'
 
 # install colordiff package :)
 alias diff='colordiff'
@@ -463,7 +470,7 @@ alias hgrp='hgrep'
 alias wtf='dmesg'
 alias nomnom='killall'
 alias tldr='less'
-alias ohknowz='cat /var/log/errors.log'
+alias ohnoz='cat /var/log/errors.log'
 
 #------
 # TMUX:
@@ -556,7 +563,13 @@ alias wget='wget -c'
 
 ## nfsrestart  - must be root  ##
 ## refresh nfs mount / cache etc for Apache ##
-alias nfsrestart='sync && sleep 2 && sudo /etc/init.d/httpd stop && sudo umount netapp2:/exports/http && sleep 2 && sudo mount -o rw,sync,rsize=32768,wsize=32768,intr,hard,proto=tcp,fsc natapp2:/exports /http/var/www/html && sudo /etc/init.d/httpd start'
+# alias nfsrestart='sync && sleep 2 && sudo /etc/init.d/httpd stop && sudo umount netapp2:/exports/http && sleep 2 && sudo mount -o rw,sync,rsize=32768,wsize=32768,intr,hard,proto=tcp,fsc natapp2:/exports /http/var/www/html && sudo /etc/init.d/httpd start'
+
+#------------
+# Arithmetic:
+#------------
+
+alias bc='bc -l'
 
 #----------
 # Clean up:

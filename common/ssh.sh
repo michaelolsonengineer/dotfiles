@@ -37,3 +37,13 @@ if [ -f "$SSH_ENV" ]; then
 else
     start_agent;
 fi
+
+# check if remote ssh session
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+  export SESSION_TYPE=remote/ssh
+# many other tests omitted
+else
+  case $(ps -o comm= -p $PPID) in
+    sshd|*/sshd) export SESSION_TYPE=remote/ssh;;
+  esac
+fi

@@ -75,11 +75,11 @@ for config in $(ls $DOTFILES/**/*.bash); do
     source $config
 done
 
-if [ -a $HOME/.privaterc ]; then
+if [ -e $HOME/.privaterc ]; then
     source $HOME/.privaterc
 fi
 
-if [ -a $HOME/.personalrc ]; then
+if [ -e $HOME/.personalrc ]; then
     source $HOME/.personalrc
 fi
 
