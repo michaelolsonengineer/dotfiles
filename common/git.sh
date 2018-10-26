@@ -125,7 +125,7 @@ gitwipe() {
 
 #
 # Git Aliases
-# (sorted alphabetically-ish)
+# (sorted alphabetically by git-command)
 #
 
 # git-add - Add file contents to the index
@@ -153,6 +153,17 @@ alias gbra='git branch -a'
 alias gbrd='git branch -d'
 alias gbrnm='git branch --no-merged'
 alias gbrr='git branch --remote'
+alias gbrsup='git branch --set-upstream-to=origin/$(git_current_branch)'
+
+# git-cherry-pick - Apply the changes introduced by some existing commits
+alias gchp='git cherry-pick'
+alias gchpa='git cherry-pick --abort'
+alias gchpc='git cherry-pick --continue'
+alias gchpx='git cherry-pick -x' # mark the commit message with cherry-picked hash
+
+# git-clean - Remove untracked files from the working tree
+alias gclean='git clean -fd'
+alias gcleanhard='git reset --hard && git clean -dfx'
 
 # git-commit - Record changes to the repository
 alias gci='git commit -v'
@@ -164,6 +175,20 @@ alias gcian!='git commit -v -a --no-edit --amend'
 alias gcians!='git commit -v -a -s --no-edit --amend'
 alias gciam='git commit -a -m'
 alias gcism='git commit -s -m'
+# signed commit - need to run `gpg --full-generate-key`
+# then need to run `git config --global user.signingkey <key from above>`
+# alias gcs='git commit -S'
+alias ggci='git gui citool'
+alias ggcia='git gui citool --amend'
+
+# git-config - Get and set repository or global options
+alias gcfg='git config'
+alias gcfgl='git config --list'
+
+# git-fetch - Download objects and refs from another repository
+alias gf='git fetch'
+alias gfa='git fetch --all --prune'
+alias gfo='git fetch origin'
 
 #
 # in progress below for cleaning up
@@ -193,53 +218,49 @@ alias groot='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cd
 alias is-git-repo="git rev-parse --is-inside-work-tree"
 alias sub-pull='git submodule foreach git pull origin master'
 
-# alias gcb='git checkout -b'
-# alias gcf='git config --list'
+
 # alias gcl='git clone --recursive'
-# alias gclean='git clean -fd'
-# alias gpristine='git reset --hard && git clean -dfx'
+
+# alias gcb='git checkout -b'
 # alias gcm='git checkout master'
 # alias gcd='git checkout develop'
-# alias gcmsg='git commit -m'
 # alias gco='git checkout'
-# alias gcount='git shortlog -sn'
 
-# alias gcp='git cherry-pick'
-# alias gcpa='git cherry-pick --abort'
-# alias gcpc='git cherry-pick --continue'
-# alias gcs='git commit -S'
+# alias gcount='git shortlog -sn'
 
 # alias gd='git diff'
 # alias gdca='git diff --cached'
-# alias gdct='git describe --tags `git rev-list --tags --max-count=1`'
 # alias gdt='git diff-tree --no-commit-id --name-only -r'
 # alias gdw='git diff --word-diff'
 
-# alias gf='git fetch'
-# alias gfa='git fetch --all --prune'
-# alias gfo='git fetch origin'
+# alias gdct='git describe --tags `git rev-list --tags --max-count=1`'
 
-# alias gg='git gui citool'
-# alias gga='git gui citool --amend'
+# alias gk='\gitk --all --branches'
+# alias gke='\gitk --all $(git log -g --pretty=%h)'
+
+
 
 # alias ggpur='git-rebase-to-remote'
 
+# alias gl='git pull'
 # alias ggpull='git pull origin $(git_current_branch)'
-# alias ggpush='git push origin $(git_current_branch)'
+# alias gup='git pull --rebase'
+# alias gupv='git pull --rebase -v'
+# alias glum='git pull upstream master'
 
-# alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'
+# alias ggpush='git push origin $(git_current_branch)'
 # alias gpsup='git push --set-upstream origin $(git_current_branch)'
+# alias gp='git push'
+# alias gpd='git push --dry-run'
+# alias gpoat='git push origin --all && git push origin --tags'
+# alias gpu='git push upstream'
+# alias gpv='git push -v'
 
 # alias ghh='git help'
 
 # alias gignore='git update-index --assume-unchanged'
 # alias gignored='git ls-files -v | grep "^[[:lower:]]"'
-# alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
 
-# alias gk='\gitk --all --branches'
-# alias gke='\gitk --all $(git log -g --pretty=%h)'
-
-# alias gl='git pull'
 # alias glg='git log --stat'
 # alias glgp='git log --stat -p'
 # alias glgg='git log --graph'
@@ -258,12 +279,6 @@ alias sub-pull='git submodule foreach git pull origin master'
 # alias gmtvim='git mergetool --no-prompt --tool=vimdiff'
 # alias gmum='git merge upstream/master'
 
-# alias gp='git push'
-# alias gpd='git push --dry-run'
-# alias gpoat='git push origin --all && git push origin --tags'
-# alias gpu='git push upstream'
-# alias gpv='git push -v'
-
 # alias gr='git remote'
 # alias gra='git remote add'
 # alias grb='git rebase'
@@ -272,23 +287,31 @@ alias sub-pull='git submodule foreach git pull origin master'
 # alias grbi='git rebase -i'
 # alias grbm='git rebase master'
 # alias grbs='git rebase --skip'
-# alias grh='git reset HEAD'
-# alias grhh='git reset HEAD --hard'
 # alias grmv='git remote rename'
 # alias grrm='git remote remove'
 # alias grset='git remote set-url'
-# alias grt='cd $(git rev-parse --show-toplevel || echo ".")'
-# alias gru='git reset --'
 # alias grup='git remote update'
 # alias grv='git remote -v'
 
-# alias gsb='git status -sb'
+# alias grt='cd $(git rev-parse --show-toplevel || echo ".")'
+
+# alias grh='git reset HEAD'
+# alias grhh='git reset HEAD --hard'
+# alias gru='git reset --'
+
 # alias gsd='git svn dcommit'
-# alias gsi='git submodule init'
-# alias gsps='git show --pretty=short --show-signature'
 # alias gsr='git svn rebase'
+# alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
+
 # alias gss='git status -s'
 # alias gst='git status'
+# alias gsb='git status -sb'
+
+# alias gsi='git submodule init'
+# alias gsu='git submodule update'
+ 
+# alias gsps='git show --pretty=short --show-signature'
+
 # alias gsta='git stash save'
 # alias gstaa='git stash apply'
 # alias gstc='git stash clear'
@@ -296,16 +319,13 @@ alias sub-pull='git submodule foreach git pull origin master'
 # alias gstl='git stash list'
 # alias gstp='git stash pop'
 # alias gsts='git stash show --text'
-# alias gsu='git submodule update'
 
 # alias gts='git tag -s'
 # alias gtv='git tag | sort -V'
 
 # alias gunignore='git update-index --no-assume-unchanged'
+
 # alias gunwip='git log -n 1 | grep -q -c "\-\-wip\-\-" && git reset HEAD~1'
-# alias gup='git pull --rebase'
-# alias gupv='git pull --rebase -v'
-# alias glum='git pull upstream master'
 
 # alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
 # alias gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify -m "--wip-- [skip ci]"'
