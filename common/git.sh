@@ -116,6 +116,14 @@ git-work-in-progress() {
   fi
 }
 
+# take this repo and copy it to somewhere else minus the .git stuff.
+gitexport() {
+    local directory=$1
+    local branch=${2:master}
+    mkdir -p "$directory"
+    git archive $branch | tar -x -C "$directory"
+}
+
 gitwipe() {
     if git rev-parse --is-inside-work-tree; then
         rm -rf *
@@ -309,7 +317,7 @@ alias sub-pull='git submodule foreach git pull origin master'
 
 # alias gsi='git submodule init'
 # alias gsu='git submodule update'
- 
+
 # alias gsps='git show --pretty=short --show-signature'
 
 # alias gsta='git stash save'
