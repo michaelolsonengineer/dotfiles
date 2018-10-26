@@ -118,6 +118,11 @@ fi
 if [ -n "$SSH_CONNECTION" ]; then
     export EDITOR='vim'
     export GIT_EDITOR='vim'
+
+    DISPLAYVAR=$SSH_CLIENT;
+    export DISPLAY=${DISPLAYVAR%% *}:0
+    echo $DISPLAY
+    export $DISPLAY
 else
     export EDITOR='vim'
     export GIT_EDITOR='vim'
@@ -131,11 +136,6 @@ MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
 MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
 MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
 export MAVEN_OPTS
-
-#DISPLAYVAR=$SSH_CLIENT;
-#export DISPLAY=${DISPLAYVAR%% *}:0
-#echo $DISPLAY
-#export $DISPLAY
 
 # Qt environment
 export QTVER=qt5
