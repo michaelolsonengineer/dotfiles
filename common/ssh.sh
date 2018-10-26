@@ -3,6 +3,16 @@ export SSH_CONFIG_DIR=$HOME/.ssh
 export SSH_KEY_PATH=$SSH_CONFIG_DIR/rsa_id
 export SSH_ENV=$SSH_CONFIG_DIR/environment
 
+# check if remote ssh session set variable to use going forward
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ]; then
+  export SESSION_TYPE=remote/ssh
+# many other tests omitted
+else
+  case $(ps -o comm= -p $PPID) in
+    sshd|*/sshd) export SESSION_TYPE=remote/ssh;;
+  esac
+fi
+
 start_agent() {
   echo "Initializing new SSH agent..."
   /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "$SSH_ENV"
@@ -13,14 +23,16 @@ start_agent() {
 }
 
 cleanssh() {
-  if [ -d "$SSH_CONFIG_DIR" ]; then
-    if [ -f $SSH_CONFIG_DIR/known_hosts ]
-    then
+  local sshHomeDir=$SSH_CONFIG_DIR
+  local knownHostsDir=$sshHomeDir/known_hosts
+
+  if [ -d "$sshHomeDir" ]; then
+    if [ -f "$knownHostsDir" ]; then
         echo 'removing SSH known Hosts - printing previous contents'
-        cat $SSH_CONFIG_DIR/known_hosts
-        rm $SSH_CONFIG_DIR/known_hosts
-        echo "$SSH_CONFIG_DIR directory should be cleared - printing its contents"
-        ls -la $SSH_CONFIG_DIR
+        cat $knownHostsDir
+        rm $knownHostsDir
+        echo "$sshHomeDir directory should be cleared - printing its contents"
+        ls -la $sshHomeDir
     else
         echo 'No known ssh hosts'
     fi
@@ -36,16 +48,6 @@ if [ -f "$SSH_ENV" ]; then
     }
 else
     start_agent;
-fi
-
-# check if remote ssh session
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ]; then
-  export SESSION_TYPE=remote/ssh
-# many other tests omitted
-else
-  case $(ps -o comm= -p $PPID) in
-    sshd|*/sshd) export SESSION_TYPE=remote/ssh;;
-  esac
 fi
 
 # Preferred editor for local and remote sessions
