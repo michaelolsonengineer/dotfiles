@@ -39,7 +39,7 @@ else
 fi
 
 # check if remote ssh session
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ]; then
   export SESSION_TYPE=remote/ssh
 # many other tests omitted
 else
@@ -47,3 +47,15 @@ else
     sshd|*/sshd) export SESSION_TYPE=remote/ssh;;
   esac
 fi
+
+# Preferred editor for local and remote sessions
+case $SESSION_TYPE in
+  remote/ssh)
+    echo "SSH_CLIENT=$SSH_CLIENT"
+    echo "SSH_TTY=$SSH_TTY"
+    echo "SSH_CONNECTION=$SSH_CONNECTION"
+
+    export EDITOR='vim'
+    export GIT_EDITOR='vim'
+  ;;
+esac
