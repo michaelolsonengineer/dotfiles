@@ -2,9 +2,7 @@ export DOTFILES=~/.dotfiles
 export ZSH=$DOTFILES/zsh
 export CURRENT_SHELL=$(ps -p $$ | awk '$1 == PP {print $4}' PP=$$)
 
-command_exists() {
-    type "$1" > /dev/null 2>&1
-}
+command_exists() { type "$1" > /dev/null 2>&1; }
 
 [ -e ~/.terminfo ] && export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
 

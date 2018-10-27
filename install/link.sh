@@ -15,6 +15,8 @@ for file in $linkables ; do
     fi
 done
 
+ln -s $DOTFILES/bin $HOME/bin
+
 echo -e "\n\ninstalling to ~/.config"
 echo "=============================="
 if [ ! -d $HOME/.config ]; then
