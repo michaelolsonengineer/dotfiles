@@ -1,4 +1,4 @@
-export DOTFILES=$HOME/.dotfiles
+export DOTFILES=~/.dotfiles
 export ZSH=$DOTFILES/zsh
 export CURRENT_SHELL=$(ps -p $$ | awk '$1 == PP {print $4}' PP=$$)
 
@@ -6,11 +6,11 @@ command_exists() {
     type "$1" > /dev/null 2>&1
 }
 
-[ -e ~/.terminfo ] && export TERMINFO_DIRS=$HOME/.terminfo:/usr/share/terminfo
+[ -e ~/.terminfo ] && export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
 
 # define the code directory
 # This is where my code exists and where I want the `c` autocomplete to work from exclusively
-[ -d $HOME/code ] && export CODE_DIR=$HOME/code
+[ -d ~/code ] && export CODE_DIR=~/code
 
 # initialize autocomplete
 autoload -U compinit add-zsh-hook
@@ -34,12 +34,12 @@ done
 # source all .zsh files inside of the zsh/ directory
 for config ($ZSH/**/*.zsh) source $config
 
-if [ -e $HOME/.privaterc ]; then
-    source $HOME/.privaterc
+if [ -e ~/.privaterc ]; then
+    source ~/.privaterc
 fi
 
-if [ -e $HOME/.personalrc ]; then
-    source $HOME/.personalrc
+if [ -e ~/.personalrc ]; then
+    source ~/.personalrc
 fi
 
 [ -z "$TMUX" ] && export TERM=xterm-256color-italic
@@ -50,7 +50,7 @@ if command_exists rbenv; then
 fi
 
 if [ -d ~/.rvm ]; then
-    PATH=$HOME/.rvm/bin:$PATH # Add RVM to PATH for scripting
+    PATH=~/.rvm/bin:$PATH # Add RVM to PATH for scripting
     source ~/.rvm/scripts/rvm
 fi
 
@@ -87,11 +87,6 @@ export REPORTTIME=10
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-#DISPLAYVAR=$SSH_CLIENT;
-#export DISPLAY=${DISPLAYVAR%% *}:0
-#echo $DISPLAY
-#export $DISPLAY
-
 export SVN_DIFFTOOL=meld
 export TERM_BOLD=$(tput smso)
 export TERM_RESET=$(tput rmso)
@@ -110,27 +105,11 @@ MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
 export MAVEN_OPTS
 
 # vim
+export EDITOR='vim'
+export GIT_EDITOR='vim'
 if [ -f ~/.vim_runtime/install_awesome_vimrc.sh ]; then
     sh ~/.vim_runtime/install_awesome_vimrc.sh >/dev/null
 fi
-
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-    export EDITOR='vim'
-    export GIT_EDITOR='vim'
-else
-    export EDITOR='vim'
-    export GIT_EDITOR='vim'
-fi
-
-export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-
-export M2_HOME=/usr/share/maven
-export M2=$M2_HOME/bin
-MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
-MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
-MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
-export MAVEN_OPTS
 
 # Qt environment
 export QTVER=qt5
@@ -139,8 +118,8 @@ export QT_QPA_PLATFORM_PLUGIN_PATH=$QT_PLUGIN_PATH/platforms
 
 # NPM environment
 # https://github.com/sindresorhus/guides/blob/master/npm-global-without-sudo.md
-export NPM_PACKAGES=$HOME/.npm-packages
-#export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+export NPM_PACKAGES=~/.npm-packages
+#export NPM_CONFIG_PREFIX="~/.npm-global"
 npm config set prefix "$NPM_PACKAGES"
 export NODE_PATH=$NPM_PACKAGES/lib/node_modules:$NODE_PATH
 
@@ -152,24 +131,24 @@ export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
 export PATH=$PATH:/usr/local/sbin
 export PATH=$PATH:/usr/local/bin/p4v/bin
-export PATH=$PATH:$HOME/local/bin
-export PATH=$PATH:$HOME/bin
-export PATH=$PATH:$HOME/scripts
-export PATH=$PATH:$HOME/tools
-export PATH=$PATH:$HOME/tools/scripts
+export PATH=$PATH:~/local/bin
+export PATH=$PATH:~/bin
+export PATH=$PATH:~/scripts
+export PATH=$PATH:~/tools
+export PATH=$PATH:~/tools/scripts
 export PATH=$PATH:$NPM_PACKAGES/bin
 export PATH=$PATH:$JAVA_HOME/bin
-export PATH=$PATH:$HOME/git/iOS-checkIPA
+export PATH=$PATH:~/git/iOS-checkIPA
 export PATH=$PATH:/opt/microchip/xc8/v1.33/bin
 export PATH=$PATH:/opt/microchip/xc16/v1.22/bin
 export PATH=$PATH:/opt/microchip/xc32/v1.33/bin
-# export PATH=$PATH:$HOME/current/p4/deckard-65x/developer/trunk/host/linux/x86/usr/bin
-# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_ramdump/linux
-# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_ramdump/scripts
-# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_busydisp
-# export PATH=$PATH:$HOME/p4/dev/armos/toolsrc/bb10_ramdump_server
-# export PATH=$PATH:$HOME/p4/dev/GK/Scripts/gkh
-# export PATH=$PATH:$HOME/p4/dev/GK/Scripts/OSTools
+# export PATH=$PATH:~/current/p4/deckard-65x/developer/trunk/host/linux/x86/usr/bin
+# export PATH=$PATH:~/p4/dev/armos/tools/bb10_ramdump/linux
+# export PATH=$PATH:~/p4/dev/armos/tools/bb10_ramdump/scripts
+# export PATH=$PATH:~/p4/dev/armos/tools/bb10_busydisp
+# export PATH=$PATH:~/p4/dev/armos/toolsrc/bb10_ramdump_server
+# export PATH=$PATH:~/p4/dev/GK/Scripts/gkh
+# export PATH=$PATH:~/p4/dev/GK/Scripts/OSTools
 # export PATH=$PATH:/opt/qdt/QDT
 # export PATH=$PATH:$QCT_DEV_SCRIPTS
 # export PATH=$PATH:$QCT_DEV_SCRIPTS/d65_int

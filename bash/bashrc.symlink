@@ -4,7 +4,7 @@
 # for examples
 
 export CURRENT_SHELL=$(ps -p $$ | awk '$1 == PP {print $4}' PP=$$)
-export DOTFILES=$HOME/.dotfiles
+export DOTFILES=~/.dotfiles
 
 # display how long all tasks over 10 seconds take
 export REPORTTIME=10
@@ -23,7 +23,7 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-[ -z "$HISTFILE" ] && HISTFILE="$HOME/.bash_history"
+[ -z "$HISTFILE" ] && HISTFILE="~/.bash_history"
 HISTSIZE=10000
 HISTFILESIZE=50000
 SAVEHIST=10000
@@ -47,7 +47,7 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-[ -e ~/.terminfo ] && export TERMINFO_DIRS=$HOME/.terminfo:/usr/share/terminfo
+[ -e ~/.terminfo ] && export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
 [ -z "$TMUX" ] && export TERM=xterm-256color-italic
 
 export EDITOR='vim'
@@ -55,8 +55,8 @@ export GIT_EDITOR='vim'
 
 # define the code directory
 # This is where my code exists and where I want the `c` autocomplete to work from exclusively
-if [ -d $HOME/code ]; then
-    export CODE_DIR=$HOME/code
+if [ -d ~/code ]; then
+    export CODE_DIR=~/code
 fi
 
 # Alias definitions.
@@ -64,8 +64,8 @@ fi
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f $HOME/.bash_aliases ]; then
-    source $HOME/.bash_aliases
+if [ -f ~/.bash_aliases ]; then
+    source ~/.bash_aliases
 fi
 
 # source all common shell scripts inside of the common/ directory
@@ -78,12 +78,12 @@ for config in $(ls $DOTFILES/**/*.bash); do
     source $config
 done
 
-if [ -e $HOME/.privaterc ]; then
-    source $HOME/.privaterc
+if [ -e ~/.privaterc ]; then
+    source ~/.privaterc
 fi
 
-if [ -e $HOME/.personalrc ]; then
-    source $HOME/.personalrc
+if [ -e ~/.personalrc ]; then
+    source ~/.personalrc
 fi
 
 # enable programmable completion features (you don't need to enable
@@ -133,8 +133,8 @@ export QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins/platfor
 
 # NPM environment
 # https://github.com/sindresorhus/guides/blob/master/npm-global-without-sudo.md
-export NPM_PACKAGES=$HOME/.npm-packages
-#export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+export NPM_PACKAGES=~/.npm-packages
+#export NPM_CONFIG_PREFIX="~/.npm-global"
 npm config set prefix "$NPM_PACKAGES"
 export NODE_PATH=$NPM_PACKAGES/lib/node_modules:$NODE_PATH
 
@@ -146,24 +146,24 @@ export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
 export PATH=$PATH:/usr/local/sbin
 export PATH=$PATH:/usr/local/bin/p4v/bin
-export PATH=$PATH:$HOME/local/bin
-export PATH=$PATH:$HOME/bin
-export PATH=$PATH:$HOME/scripts
-export PATH=$PATH:$HOME/tools
-export PATH=$PATH:$HOME/tools/scripts
+export PATH=$PATH:~/local/bin
+export PATH=$PATH:~/bin
+export PATH=$PATH:~/scripts
+export PATH=$PATH:~/tools
+export PATH=$PATH:~/tools/scripts
 export PATH=$PATH:$NPM_PACKAGES/bin
 export PATH=$PATH:$JAVA_HOME/bin
-export PATH=$PATH:$HOME/git/iOS-checkIPA
+export PATH=$PATH:~/git/iOS-checkIPA
 export PATH=$PATH:/opt/microchip/xc8/v1.33/bin
 export PATH=$PATH:/opt/microchip/xc16/v1.22/bin
 export PATH=$PATH:/opt/microchip/xc32/v1.33/bin
-# export PATH=$PATH:$HOME/current/p4/deckard-65x/developer/trunk/host/linux/x86/usr/bin
-# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_ramdump/linux
-# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_ramdump/scripts
-# export PATH=$PATH:$HOME/p4/dev/armos/tools/bb10_busydisp
-# export PATH=$PATH:$HOME/p4/dev/armos/toolsrc/bb10_ramdump_server
-# export PATH=$PATH:$HOME/p4/dev/GK/Scripts/gkh
-# export PATH=$PATH:$HOME/p4/dev/GK/Scripts/OSTools
+# export PATH=$PATH:~/current/p4/deckard-65x/developer/trunk/host/linux/x86/usr/bin
+# export PATH=$PATH:~/p4/dev/armos/tools/bb10_ramdump/linux
+# export PATH=$PATH:~/p4/dev/armos/tools/bb10_ramdump/scripts
+# export PATH=$PATH:~/p4/dev/armos/tools/bb10_busydisp
+# export PATH=$PATH:~/p4/dev/armos/toolsrc/bb10_ramdump_server
+# export PATH=$PATH:~/p4/dev/GK/Scripts/gkh
+# export PATH=$PATH:~/p4/dev/GK/Scripts/OSTools
 # export PATH=$PATH:/opt/qdt/QDT
 # export PATH=$PATH:$QCT_DEV_SCRIPTS
 # export PATH=$PATH:$QCT_DEV_SCRIPTS/d65_int
