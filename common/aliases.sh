@@ -436,13 +436,13 @@ getcolumn() { perl -ne '@cols = split; print "$cols['$1']\n"' ; }
 cat_pdfs() { python '/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py' "$@" ; }
 
 # numberLines: echo the lines of a file preceded by line number
-numberLines() { perl -pe 's/^/$. /' "$@" ; }
+numberlines() { perl -pe 's/^/$. /' "$@" ; }
 
 # convertHex: convert hexadecimal numbers to decimal
-convertHex() { perl -ne 'print hex(), "\n"' ; }
+converthex() { perl -ne 'print hex(), "\n"' ; }
 
 # allStrings: show all strings (ASCII & Unicode) in a file
-allStrings () { pyg "$1" | tr -d "\0" | strings ; }
+allstrings () { pyg "$1" | tr -d "\0" | strings ; }
 
 # /usr/bin/iconv & /sw/sbin/iconv convert one character encoding to another
 
