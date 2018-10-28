@@ -282,7 +282,7 @@ alias ghist="gitgraph --abbrev-commit --date=short --pretty=format:'$gitFormatOn
 alias ghistl="gitgraph --abbrev-commit --pretty=format:'$gitFormatOneLine'"
 alias ghistr="gitgraph --abbrev-commit --date=relative --pretty=format:'$gitFormatOneLine'"
 # show what I did today
-alias gday= "!sh -c 'git log --reverse --no-merges --branches=* --date=local --after=\"yesterday 11:59PM\" --author=\"`git config --get user.name`\"'"
+alias gday="git log --reverse --no-merges --date=local --after='yesterday 11:59PM' --author=\"`git config --get user.name`\""
 
 alias gmerge='git merge'
 alias gmergetheirs='git merge --strategy-option=theirs'
