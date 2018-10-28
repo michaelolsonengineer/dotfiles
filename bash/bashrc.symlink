@@ -101,6 +101,7 @@ fi
 # User configuration:
 #---------------------
 
+export GIT_DIFFTOOL=meld
 export SVN_DIFFTOOL=meld
 export TERM_BOLD=$(tput smso)
 export TERM_RESET=$(tput rmso)

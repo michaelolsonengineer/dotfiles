@@ -83,6 +83,7 @@ export REPORTTIME=10
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
+export GIT_DIFFTOOL=meld
 export SVN_DIFFTOOL=meld
 export TERM_BOLD=$(tput smso)
 export TERM_RESET=$(tput rmso)

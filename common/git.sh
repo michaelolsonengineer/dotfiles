@@ -1,8 +1,9 @@
+DIFFTOOL=${GIT_DIFFTOOL:-meld}
+alias is-git-repo="git rev-parse --is-inside-work-tree &> /dev/null"
 
 #
 # Functions
 #
-
 g() {
     if [[ $# > 0 ]]; then
         # if there are arguments, send them to git
@@ -43,7 +44,7 @@ git-current-branch() {
 
 # The list of remotes
 git-current-repository() {
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+  if ! is-git-repo; then
     return
   fi
   echo $(git remote -v | cut -d':' -f 2)
@@ -125,10 +126,45 @@ gitexport() {
 }
 
 gitwipe() {
-    if git rev-parse --is-inside-work-tree; then
+    if is-git-repo; then
         rm -rf *
         git checkout .
     fi
+}
+
+gdiffstathash() {
+  local commits="${1:-HEAD}^..${1:-HEAD}"
+  case "$1" in
+    --all) commits="";;
+  esac
+   
+  git log --stat --patch $commits
+}
+
+gresolveconflict() {
+  local strategry=$1
+  local pattern=$2
+  local file
+  local selectedConflictFiles
+
+  if ! is-git-repo; then
+    return
+  fi
+
+  case "$strategry" in
+    t|the*) strategry=theirs;;
+    o|our*) strategry=ours;;
+    *) echo "Need to specify checkout strategy to be either: (theirs, ours)" && exit -1;;
+  esac
+  
+  selectedConflictFiles=$(git diff --name-only --diff-filter=U)
+  [ -n "$pattern" ] && selectedConflictFiles=$(echo $selectedConflictFiles | grep $pattern)
+
+  for file in $selectedConflictFiles; do
+    git checkout --$strategry $file
+    git add $file
+  done
+  git commit
 }
 
 #
@@ -193,10 +229,90 @@ alias ggcia='git gui citool --amend'
 alias gcfg='git config'
 alias gcfgl='git config --list'
 
+# git-checkout - 
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gcotheirs='git checkout --theirs'
+alias gcoours='git checkout --ours'
+
 # git-fetch - Download objects and refs from another repository
 alias gf='git fetch'
 alias gfa='git fetch --all --prune'
 alias gfo='git fetch origin'
+
+# git-log - 
+formatShortHash="%h"
+formatRefNames="%d"
+formatSubject="%s"
+formatAuthorName="%an"
+formatAuthorDate="%ad"
+formatAuthorEmail="%aE"
+formatMark="%m"
+if ls --color > /dev/null 2>&1; then # GNU `ls`
+  colorflag="--color=auto"
+  formatRefNames="%C(yellow)$formatRefNames"
+  formatShortHash="%C(red)$formatShortHash"
+  formatRefNames="%C(bold green)$formatRefNames"
+  formatSubject="%C(reset)$formatSubject"
+  formatAuthorName="%C(bold blue)$formatAuthorName%C(reset)"
+  formatAuthorEmail="%C(green)$formatAuthorEmail%C(reset)"
+  formatAuthorDate="%C(yellow)$formatAuthorDate%C(reset)"
+fi
+
+gitFormatOneLine="$formatShortHash $formatAuthorDate | $formatRefNames $formatSubject [$formatAuthorName <$formatAuthorEmail>]"
+alias glog="git log"
+# quick and simple logs
+alias glg='git log --oneline --decorate --abbrev-commit --all'
+alias glgr='glg --date=relative'
+# equivalent to ls (listing) history
+alias glgp="git log --decorate --pretty=format:\"$gitFormatOneLine\""
+alias gls="glgp --date=short"
+alias glr="glgp --date=relative"
+alias gll='glgp --numstat'
+alias gl1="git ll -1"
+# log with diff stat info
+alias gstat='git log --stat'
+# log with diff
+alias glgpatch='git log --patch'
+alias gfilelog='glgpatch'
+alias gfl="gfilelog"
+# log with diff stat info and diff
+alias glogdiff='gdiffstathash'
+alias gdifflog='gdiffstathash'
+# log as a graph
+alias gitgraph='git log --graph'
+alias gitgraph10='gitgraph --max-count=10'
+alias ggraphdiff="gitgraph --abbrev-commit --date=relative --pretty=format:'%Cred%h%Creset %C(bold blue)%an%C(reset) - %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset'"
+# log as a graph on one line
+alias ggraph='glg --graph'
+alias ghist="gitgraph --abbrev-commit --date=short --pretty=format:'$gitFormatOneLine'"
+alias ghistl="gitgraph --abbrev-commit --pretty=format:'$gitFormatOneLine'"
+alias ghistr="gitgraph --abbrev-commit --date=relative --pretty=format:'$gitFormatOneLine'"
+# show what I did today
+alias gday= "!sh -c 'git log --reverse --no-merges --branches=* --date=local --after=\"yesterday 11:59PM\" --author=\"`git config --get user.name`\"'"
+
+alias gmerge='git merge'
+alias gmergetheirs='git merge --strategy-option=theirs'
+alias gmergeours='git merge --strategy-option=ours'
+alias gmergetool="git mergetool --no-prompt --tool=$DIFFTOOL"
+alias gmergetoolvim="git mergetool --no-prompt --tool=vimdiff"
+alias gmt="gmergetool"
+
+# git-status - 
+alias gstatus='git status'
+alias gss='git status -s' # also gs with not params/args
+alias gssb='git status -sb'
+
+# git-stash - 
+alias gsta='git stash apply'
+alias gstc='git stash clear'
+alias gstd='git stash drop'
+alias gstl='git stash list'
+alias gstp='git stash pop'
+alias gsts='git stash save'
+alias gstshow='git stash show --text'
+alias gpop='gstp'
+alias gsave='gsts'
 
 #
 # in progress below for cleaning up
@@ -204,15 +320,11 @@ alias gfo='git fetch origin'
 alias gpull='git pull'
 alias gpush='git push'
 alias gdiff='git diff'
+alias gdifftool='git difftool'
 alias gdiffc='git diff --cached'
-alias gss='git status --short'
-alias gst='git status'
-alias gsave='git stash save'
-alias gpop='git stash pop'
 alias gmv='git mv'
 alias grm='git rm'
 alias grename='git-rename'
-alias glog="git log"
 alias ghide="git update-index --assume-unchanged"
 alias gunhide="git update-index --no-assume-unchanged"
 alias gunhideall="git-unhide-all"
@@ -223,21 +335,13 @@ alias gconflict="git diff --name-only --diff-filter=U"
 
 # git root
 alias groot='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
-alias is-git-repo="git rev-parse --is-inside-work-tree"
 alias sub-pull='git submodule foreach git pull origin master'
-
 
 # alias gcl='git clone --recursive'
 
-# alias gcb='git checkout -b'
-# alias gcm='git checkout master'
-# alias gcd='git checkout develop'
-# alias gco='git checkout'
-
-# alias gcount='git shortlog -sn'
-
 # alias gd='git diff'
 # alias gdca='git diff --cached'
+# alias gdcl='git diff --cached HEAD^'
 # alias gdt='git diff-tree --no-commit-id --name-only -r'
 # alias gdw='git diff --word-diff'
 
@@ -245,8 +349,6 @@ alias sub-pull='git submodule foreach git pull origin master'
 
 # alias gk='\gitk --all --branches'
 # alias gke='\gitk --all $(git log -g --pretty=%h)'
-
-
 
 # alias ggpur='git-rebase-to-remote'
 
@@ -264,37 +366,18 @@ alias sub-pull='git submodule foreach git pull origin master'
 # alias gpu='git push upstream'
 # alias gpv='git push -v'
 
-# alias ghh='git help'
-
 # alias gignore='git update-index --assume-unchanged'
 # alias gignored='git ls-files -v | grep "^[[:lower:]]"'
 
-# alias glg='git log --stat'
-# alias glgp='git log --stat -p'
-# alias glgg='git log --graph'
-# alias glgga='git log --graph --decorate --all'
-# alias glgm='git log --graph --max-count=10'
-# alias glo='git log --oneline --decorate'
-# alias glol="git log --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-# alias glola="git log --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all"
-# alias glog='git log --oneline --decorate --graph'
-# alias gloga='git log --oneline --decorate --graph --all'
-# alias glp="_git_log_prettily"
-
-# alias gm='git merge'
-# alias gmom='git merge origin/master'
-# alias gmt='git mergetool --no-prompt'
-# alias gmtvim='git mergetool --no-prompt --tool=vimdiff'
-# alias gmum='git merge upstream/master'
-
-# alias gr='git remote'
-# alias gra='git remote add'
 # alias grb='git rebase'
 # alias grba='git rebase --abort'
 # alias grbc='git rebase --continue'
 # alias grbi='git rebase -i'
 # alias grbm='git rebase master'
 # alias grbs='git rebase --skip'
+
+# alias gr='git remote'
+# alias gra='git remote add' 
 # alias grmv='git remote rename'
 # alias grrm='git remote remove'
 # alias grset='git remote set-url'
@@ -311,22 +394,10 @@ alias sub-pull='git submodule foreach git pull origin master'
 # alias gsr='git svn rebase'
 # alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
 
-# alias gss='git status -s'
-# alias gst='git status'
-# alias gsb='git status -sb'
-
 # alias gsi='git submodule init'
 # alias gsu='git submodule update'
 
 # alias gsps='git show --pretty=short --show-signature'
-
-# alias gsta='git stash save'
-# alias gstaa='git stash apply'
-# alias gstc='git stash clear'
-# alias gstd='git stash drop'
-# alias gstl='git stash list'
-# alias gstp='git stash pop'
-# alias gsts='git stash show --text'
 
 # alias gts='git tag -s'
 # alias gtv='git tag | sort -V'
@@ -337,3 +408,13 @@ alias sub-pull='git submodule foreach git pull origin master'
 
 # alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
 # alias gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify -m "--wip-- [skip ci]"'
+ 
+unset colorflag
+unset formatShortHash
+unset formatRefNames
+unset formatSubject
+unset formatAuthorName
+unset formatAuthorDate
+unset formatAuthorEmail
+unset formatMark
+unset gitFormatOneLine
