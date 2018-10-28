@@ -42,20 +42,13 @@ git-current-branch() {
   echo ${ref#refs/heads/}
 }
 
-# The list of remotes
-git-current-repository() {
-  if ! is-git-repo; then
-    return
-  fi
-  echo $(git remote -v | cut -d':' -f 2)
-}
-
-# Pretty log messages
- _git_log_prettily(){
-  if ! [ -z $1 ]; then
-    git log --pretty=$1
-  fi
-}
+# # The list of remotes
+# git-current-repository() {
+#   if ! is-git-repo; then
+#     return
+#   fi
+#   echo $(git remote) : $(git remote -v | cut -d':' -f 2)
+# }
 
 give-credit() {
     git commit --amend --author $1 <$2> -C HEAD
@@ -78,7 +71,7 @@ gipull() {
   if [[ "$#" != 0 ]] && [[ "$#" != 1 ]]; then
     git pull origin "${*}"
   else
-    [[ "$#" == 0 ]] && local b="$(git_current_branch)"
+    [[ "$#" == 0 ]] && local b="$(git-current-branch)"
     git pull origin "${b:=$1}"
   fi
 }
@@ -87,13 +80,13 @@ gipush() {
   if [[ "$#" != 0 ]] && [[ "$#" != 1 ]]; then
     git push origin "${*}"
   else
-    [[ "$#" == 0 ]] && local b="$(git_current_branch)"
+    [[ "$#" == 0 ]] && local b="$(git-current-branch)"
     git push origin "${b:=$1}"
   fi
 }
 
 gipushf() {
-  [[ "$#" != 1 ]] && local b="$(git_current_branch)"
+  [[ "$#" != 1 ]] && local b="$(git-current-branch)"
   git push --force origin "${b:=$1}"
 }
 
@@ -106,7 +99,7 @@ git-pull-n-push() {
 }
 
 git-rebase-to-remote() {
-  [[ "$#" != 1 ]] && local b="$(git_current_branch)"
+  [[ "$#" != 1 ]] && local b="$(git-current-branch)"
   git pull --rebase origin "${b:=$1}"
 }
 
@@ -120,7 +113,7 @@ git-work-in-progress() {
 # take this repo and copy it to somewhere else minus the .git stuff.
 gitexport() {
     local directory=$1
-    local branch=${2:master}
+    local branch=${2:-master}
     mkdir -p "$directory"
     git archive $branch | tar -x -C "$directory"
 }
@@ -282,7 +275,7 @@ alias gdifflog='gdiffstathash'
 # log as a graph
 alias gitgraph='git log --graph'
 alias gitgraph10='gitgraph --max-count=10'
-alias ggraphdiff="gitgraph --abbrev-commit --date=relative --pretty=format:'%Cred%h%Creset %C(bold blue)%an%C(reset) - %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset'"
+alias ggraphdiff="gitgraph10 --stat --patch --abbrev-commit --date=relative --pretty=format:'%Cred%h%Creset %C(bold blue)%an%C(reset) - %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset'"
 # log as a graph on one line
 alias ggraph='glg --graph'
 alias ghist="gitgraph --abbrev-commit --date=short --pretty=format:'$gitFormatOneLine'"
