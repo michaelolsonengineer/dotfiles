@@ -249,14 +249,14 @@ if ls --color > /dev/null 2>&1; then # GNU `ls`
   formatAuthorEmail="%C(green)$formatAuthorEmail%C(reset)"
 fi
 
-gitFormatStr="format:'$formatShortHash $formatAuthorDate | $formatRefNames $formatSubject [$formatAuthorName <$formatAuthorEmail>]'"
+export GIT_LOG_FORMAT_STR="format:'$formatShortHash $formatAuthorDate | $formatRefNames $formatSubject [$formatAuthorName <$formatAuthorEmail>]'"
 
 alias glog="git log"
 # quick and simple logs
 alias glg='git log --oneline --decorate --abbrev-commit --all'
 alias glgr='glg --date=relative'
 # equivalent to ls (listing) history
-alias glgp="git log --decorate --pretty=$gitFormatStr"
+alias glgp="git log --decorate --pretty=$GIT_LOG_FORMAT_STR"
 alias gls="glgp --date=short"
 alias glr="glgp --date=relative"
 alias gll='glgp --numstat'
@@ -272,12 +272,12 @@ alias glogdiff='gdiffstathash'
 alias gdifflog='gdiffstathash'
 # log as a graph
 alias gitgraph='git log --graph'
-alias ggraphdiff="gitgraph --max-count=10 --stat --patch --abbrev-commit --date=relative --pretty=$gitFormatStr"
+alias ggraphdiff="gitgraph --max-count=10 --stat --patch --abbrev-commit --date=relative --pretty=$GIT_LOG_FORMAT_STR"
 # log as a graph on one line
 alias ggraph='glg --graph'
-alias ghist="gitgraph --abbrev-commit --date=short --pretty=$gitFormatStr"
-alias ghistl="gitgraph --abbrev-commit --pretty=$gitFormatStr"
-alias ghistr="gitgraph --abbrev-commit --date=relative --pretty=$gitFormatStr"
+alias ghist="gitgraph --abbrev-commit --date=short --pretty=$GIT_LOG_FORMAT_STR"
+alias ghistl="gitgraph --no-abbrev-commit --pretty=$GIT_LOG_FORMAT_STR"
+alias ghistr="gitgraph --abbrev-commit --date=relative --pretty=$GIT_LOG_FORMAT_STR"
 # show what I did today
 alias gday="git log --reverse --no-merges --date=local --after='yesterday 11:59PM' --author=\"`git config --get user.name`\""
 
@@ -407,4 +407,3 @@ unset formatAuthorName
 unset formatAuthorDate
 unset formatAuthorEmail
 unset formatMark
-unset gitFormatStr

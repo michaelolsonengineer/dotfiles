@@ -50,17 +50,18 @@
     conf = "!git s | grep ^U"
 
     ### log commands ###
-    l = log --graph --pretty=format:'%Cred%h%Creset %C(bold blue)%an%C(reset) - %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
-    hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
-    ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cgreen\\ [%cn]" --decorate
-    ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cgreen\\ [%cn]" --decorate --numstat
-    lnc = log --pretty=format:"%h\\ %s\\ [%cn]"
-    lds = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cgreen\\ [%cn]" --decorate --date=short
-    lsd = log --graph --decorate --pretty=oneline --abbrev-commit --all
-    ld = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cgreen\\ [%cn]" --decorate --date=relative
-    filelog = log -u
-    fl = log -u
-    dl = "!git ll -1"
+    l       = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\""
+    ls      = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit               --date=short\""
+    ll      = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --no-abbrev-commit --numstat\""
+    lsd     = log                              --decorate --abbrev-commit    --graph    --date=short     --all
+    hist    = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=short\""
+    histr   = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\""
+    histl   = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --no-abbrev-commit --graph\""
+    histo   = log --oneline                    --decorate --abbrev-commit    --graph    --date=relative
+    filelog = log --patch
+    fl      = log --patch
+    lstat   = log --stat
+    llast = "!git ll -1"
     dlc = diff --cached HEAD^
     lc = "!f() { git ll "${1:-HEAD}"^.."${1:-HEAD}"; }; f"
 
