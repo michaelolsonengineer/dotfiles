@@ -6,6 +6,8 @@
 export CURRENT_SHELL=$(ps -p $$ | awk '$1 == PP {print $4}' PP=$$)
 export DOTFILES=~/.dotfiles
 
+command_exists() { type "$1" > /dev/null 2>&1; }
+
 # display how long all tasks over 10 seconds take
 export REPORTTIME=10
 

@@ -15,8 +15,10 @@ fi
 # show environment path
 alias path="echo -e ${PATH//:/\\\\n}"
 
-# Detect which `ls` flavor is in use
-if ls --color > /dev/null 2>&1; then # GNU `ls`
+alias is-gnu-colorize-available="ls --color > /dev/null 2>&1"
+
+# Detect which `ls` flavor is in use, then colorize the output
+if is-gnu-colorize-available; then # GNU `ls`
     colorflag="--color=auto"
 else # OS X `ls`
     colorflag="-G"

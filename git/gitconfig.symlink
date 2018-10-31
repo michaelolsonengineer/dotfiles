@@ -42,6 +42,7 @@
 
     diff = diff --ignore-space-at-eol -b -w --ignore-blank-lines
     df = difftool
+    dt = difftool
     diffr = "!f() { git diff "$1"^.."$1"; }; f"
     dr = "!f() { git diff "$1"^.."$1"; }; f"
 

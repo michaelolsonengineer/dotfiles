@@ -1,5 +1,31 @@
 DIFFTOOL=${GIT_DIFFTOOL:-meld}
 alias is-git-repo="git rev-parse --is-inside-work-tree &> /dev/null"
+! command_exists is-gnu-colorize-available \
+  && alias is-gnu-colorize-available="ls --color > /dev/null 2>&1"
+
+formatShortHash="%h"
+formatRefNames="%d"
+formatSubject="%s"
+formatAuthorName="%an"
+formatAuthorDate="%ad"
+formatAuthorEmail="%aE"
+if is-gnu-colorize-available; then # GNU `ls`
+  formatShortHash="%C(red)$formatShortHash"
+  formatRefNames="%C(bold green)$formatRefNames"
+  formatSubject="%C(reset)$formatSubject"
+  formatAuthorName="%C(bold blue)$formatAuthorName%C(reset)"
+  formatAuthorDate="%C(yellow)$formatAuthorDate%C(reset)"
+  formatAuthorEmail="%C(green)$formatAuthorEmail%C(reset)"
+fi
+
+export GIT_LOG_FORMAT_STR="format:'$formatShortHash $formatAuthorDate | $formatRefNames $formatSubject [$formatAuthorName <$formatAuthorEmail>]'"
+
+unset formatShortHash
+unset formatRefNames
+unset formatSubject
+unset formatAuthorName
+unset formatAuthorDate
+unset formatAuthorEmail
 
 #
 # Functions
@@ -130,7 +156,7 @@ gdiffstathash() {
   case "$1" in
     --all) commits="";;
   esac
-   
+
   git log --stat --patch $commits
 }
 
@@ -149,7 +175,7 @@ gresolveconflict() {
     o|our*) strategry=ours;;
     *) echo "Need to specify checkout strategy to be either: (theirs, ours)" && exit -1;;
   esac
-  
+
   selectedConflictFiles=$(git diff --name-only --diff-filter=U)
   [ -n "$pattern" ] && selectedConflictFiles=$(echo $selectedConflictFiles | grep $pattern)
 
@@ -222,7 +248,7 @@ alias ggcia='git gui citool --amend'
 alias gcfg='git config'
 alias gcfgl='git config --list'
 
-# git-checkout - 
+# git-checkout -
 alias gco='git checkout'
 alias gcob='git checkout -b'
 alias gcotheirs='git checkout --theirs'
@@ -233,24 +259,7 @@ alias gf='git fetch'
 alias gfa='git fetch --all --prune'
 alias gfo='git fetch origin'
 
-# git-log - 
-formatShortHash="%h"
-formatRefNames="%d"
-formatSubject="%s"
-formatAuthorName="%an"
-formatAuthorDate="%ad"
-formatAuthorEmail="%aE"
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-  formatShortHash="%C(red)$formatShortHash"
-  formatRefNames="%C(bold green)$formatRefNames"
-  formatSubject="%C(reset)$formatSubject"
-  formatAuthorName="%C(bold blue)$formatAuthorName%C(reset)"
-  formatAuthorDate="%C(yellow)$formatAuthorDate%C(reset)"
-  formatAuthorEmail="%C(green)$formatAuthorEmail%C(reset)"
-fi
-
-export GIT_LOG_FORMAT_STR="format:'$formatShortHash $formatAuthorDate | $formatRefNames $formatSubject [$formatAuthorName <$formatAuthorEmail>]'"
-
+# git-log -
 alias glog="git log"
 # quick and simple logs
 alias glg='git log --oneline --decorate --abbrev-commit --all'
@@ -288,12 +297,12 @@ alias gmergetool="git mergetool --no-prompt --tool=$DIFFTOOL"
 alias gmergetoolvim="git mergetool --no-prompt --tool=vimdiff"
 alias gmt="gmergetool"
 
-# git-status - 
+# git-status -
 alias gstatus='git status'
 alias gss='git status -s' # also gs with not params/args
 alias gssb='git status -sb'
 
-# git-stash - 
+# git-stash -
 alias gsta='git stash apply'
 alias gstc='git stash clear'
 alias gstd='git stash drop'
@@ -367,7 +376,7 @@ alias sub-pull='git submodule foreach git pull origin master'
 # alias grbs='git rebase --skip'
 
 # alias gr='git remote'
-# alias gra='git remote add' 
+# alias gra='git remote add'
 # alias grmv='git remote rename'
 # alias grrm='git remote remove'
 # alias grset='git remote set-url'
@@ -398,12 +407,3 @@ alias sub-pull='git submodule foreach git pull origin master'
 
 # alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
 # alias gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify -m "--wip-- [skip ci]"'
- 
-unset colorflag
-unset formatShortHash
-unset formatRefNames
-unset formatSubject
-unset formatAuthorName
-unset formatAuthorDate
-unset formatAuthorEmail
-unset formatMark
