@@ -182,8 +182,8 @@ gresolveconflict() {
   for file in $selectedConflictFiles; do
     git checkout --$strategry $file
     git add $file
+    echo "Resolved: $file"
   done
-  git commit
 }
 
 #

@@ -44,7 +44,7 @@
     df = difftool
     dt = difftool
     diffr = "!f() { git diff "$1"^.."$1"; }; f"
-    dr = "!f() { git diff "$1"^.."$1"; }; f"
+    dr = "!f() { git dt "$1"^.."$1"; }; f"
 
     # rebase commands
     cont = rebase --continue
@@ -271,8 +271,7 @@
     tool = meld
 
 [mergetool "meld"]
-    cmd = /usr/bin/meld --auto-merge -L "LOCAL=${LOCAL##*/}" "$LOCAL" -L "MERGED=${MERGED##*/}" "$MERGED" -L "REMOTE=${REMOTE##*/}" "$REMOTE" --output "$MERGED"
-    #cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED"
+    cmd = meld --auto-merge -L "LOCAL=${LOCAL##*/}" "$LOCAL" -L "MERGED=${MERGED##*/}" "$MERGED" -L "REMOTE=${REMOTE##*/}" "$REMOTE" --output "$MERGED"
     keepTemporaries = false
     trustExitCode = false
     keepBackup = false
@@ -295,5 +294,6 @@
 
 [gc]
     auto = 0
+
 [receive]
 	denyCurrentBranch = updateInstead
