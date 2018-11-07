@@ -51,9 +51,9 @@
     conf = "!git s | grep ^U"
 
     ### log commands ###
-    l       = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\""
-    ls      = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit               --date=short\""
-    ll      = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --no-abbrev-commit --numstat\""
+    l       = "!sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\""
+    ls      = "!sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit               --date=short\""
+    ll      = "!sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --no-abbrev-commit --numstat\""
     lsd     = log                              --decorate --abbrev-commit    --graph    --date=short     --all
     hist    = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=short\""
     histr   = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\""

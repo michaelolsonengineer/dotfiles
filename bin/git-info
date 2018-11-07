@@ -1,0 +1,63 @@
+#!/bin/bash
+
+formatShortHash="%h"
+formatRefNames="%d"
+formatSubject="%s"
+formatAuthorName="%an"
+formatAuthorDate="%ad"
+formatAuthorEmail="%aE"
+if ls --color > /dev/null 2>&1; then # GNU `ls`
+  formatShortHash="%C(red)$formatShortHash"
+  formatRefNames="%C(bold green)$formatRefNames"
+  formatSubject="%C(reset)$formatSubject"
+  formatAuthorName="%C(bold blue)$formatAuthorName%C(reset)"
+  formatAuthorDate="%C(yellow)$formatAuthorDate%C(reset)"
+  formatAuthorEmail="%C(green)$formatAuthorEmail%C(reset)"
+fi
+
+GIT_LOG_FORMAT_STR="format:'$formatShortHash $formatAuthorDate | $formatRefNames $formatSubject [$formatAuthorName <$formatAuthorEmail>]'"
+
+unset formatShortHash
+unset formatRefNames
+unset formatSubject
+unset formatAuthorName
+unset formatAuthorDate
+unset formatAuthorEmail
+
+# Show various information about this git directory
+if git rev-parse --is-inside-work-tree &> /dev/null; then
+  echo "== Summarized Recent Commits"
+  git --no-pager log --pretty="$GIT_LOG_FORMAT_STR" --decorate --abbrev-commit --graph --date=relative --max-count=10
+  echo
+  echo
+
+  echo "== Remote Tags: "
+  git tag -l
+  echo
+
+  echo "== Describe most recent commit tag"
+  git describe
+  echo
+
+  echo "== Most Recent Commit"
+  git log --max-count=1
+  echo
+
+  echo "== Configuration (.git/config)"
+  git config --list --local
+  echo
+
+  echo "== Local Branches:"
+  git branch
+  echo
+
+  echo "== Remote Branches: "
+  git branch -r
+  echo
+
+  echo "== Remote URL: "
+  git remote -v
+  echo
+else
+  echo "Not a git repository." 2>&1
+fi

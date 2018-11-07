@@ -29,7 +29,7 @@ alias smv='svn move'
 # alias svnste="svn st --ignore-externals | grep -v '^X' | cut -d: -f2"
 # alias svnsti="svn status --ignore-externals | grep \"^?    \""
 # alias svnst="echo \"Staged :\" && echo \"-\" && svnste && echo && echo \"Unstaged :\" && echo \"--\" && svnsti"
- 
+
 svn_prompt_info() {
   local _DISPLAY
   if in_svn; then
@@ -47,7 +47,7 @@ $REPO_NAME_COLOR$_DISPLAY$PROMPT_BASE_COLOR$SVN_PROMPT_SUFFIX$PROMPT_BASE_COLOR$
 
 
 in_svn() {
-  svn info >/dev/null 2>&1
+  svn info ${1:-.} >/dev/null 2>&1
 }
 
 svn_get_repo_name() {
@@ -55,6 +55,20 @@ svn_get_repo_name() {
     LANG=C svn info | sed -n 's/^Repository\ Root:\ .*\///p' | read SVN_ROOT
     LANG=C svn info | sed -n "s/^URL:\ .*$SVN_ROOT\///p"
   fi
+}
+
+# strip root url (relative or otherwise) and svn branch
+get_svn_project_name() {
+  local input=$1
+  local rootUrl=$(svn info --show-item 'repos-root-url' 2> /dev/null)
+  [ -z "$input" ] && input=$(svn info --show-item 'relative-url' 2> /dev/null)
+  echo $input | \
+        sed -e "s,$rootUrl,,"    \
+            -e "s,\^/,,"         \
+            -e "s,/trunk,,"      \
+            -e "s,/releases.*,," \
+            -e "s,/branches.*,," \
+            -e "s,/tags.*,,"
 }
 
 svn_get_branch_name() {
@@ -124,7 +138,7 @@ svn_repo_need_upgrade() {
 }
 
 svn_current_branch_name() {
-  grep '^URL:' <<< "${1:-$(svn info 2> /dev/null)}" | egrep -o '(tags|branches)/[^/]+|trunk'  
+  grep '^URL:' <<< "${1:-$(svn info 2> /dev/null)}" | egrep -o '(tags|branches)/[^/]+|trunk'
 }
 
 svn_repo_root_name() {

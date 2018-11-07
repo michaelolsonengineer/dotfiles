@@ -264,12 +264,12 @@ alias glog="git log"
 # quick and simple logs
 alias glg='git log --oneline --decorate --abbrev-commit --all'
 alias glgr='glg --date=relative'
-# equivalent to ls (listing) history
-alias glgp="git log --decorate --pretty=$GIT_LOG_FORMAT_STR"
+# equivalent to ls (listing)
+alias glgp="git --no-pager log --decorate --pretty=$GIT_LOG_FORMAT_STR"
 alias gls="glgp --date=short"
 alias glr="glgp --date=relative"
 alias gll='glgp --numstat'
-alias gl1="git ll -1"
+alias gl1="glgp -1"
 # log with diff stat info
 alias gstat='git log --stat'
 # log with diff
@@ -282,8 +282,9 @@ alias gdifflog='gdiffstathash'
 # log as a graph
 alias gitgraph='git log --graph'
 alias ggraphdiff="gitgraph --max-count=10 --stat --patch --abbrev-commit --date=relative --pretty=$GIT_LOG_FORMAT_STR"
-# log as a graph on one line
+# graph oneliner logs
 alias ggraph='glg --graph'
+# roughly equivalent to ls (listing) but with scrolling
 alias ghist="gitgraph --abbrev-commit --date=short --pretty=$GIT_LOG_FORMAT_STR"
 alias ghistl="gitgraph --no-abbrev-commit --pretty=$GIT_LOG_FORMAT_STR"
 alias ghistr="gitgraph --abbrev-commit --date=relative --pretty=$GIT_LOG_FORMAT_STR"
