@@ -76,9 +76,18 @@ fi
 export REPORTTIME=10
 
 # You may need to manually set your language environment
-# export LANG=en_US
-# export LC_ALL=C
-# export LC_CTYPE=C
+LINUX_VERSION=$(lsb_release -a 2>/dev/null | grep "^Description" | sed 's/Description:\s\+//')
+if [[ "$LINUX_VERSION" =~ "Ubuntu 18.04" ]]; then
+# as root if encountering locale issue
+# echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+# echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+# echo "LANG=en_US.UTF-8" > /etc/locale.conf
+# locale-gen en_US.UTF-8
+
+    export LANG=en_US.UTF-8
+    export LC_ALL=C
+# export LC_CTYPE=en_US.UTF-8
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
