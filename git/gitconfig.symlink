@@ -209,8 +209,9 @@
     ignorecase = false
     precomposeunicode = false
     excludesfile = ~/.gitignore_global
-    #packedGitLimit = 128m
-    #packedGitWindowSize = 128m
+    # compression = 0
+    # packedGitLimit = 128m
+    # packedGitWindowSize = 128m
 
 [rerere]
     enabled = true
@@ -224,6 +225,7 @@
 
 [http]
     postBuffer = 1048576000
+    # maxRequestBuffer = 128M
 
 [gitflow "branch"]
     master = master
