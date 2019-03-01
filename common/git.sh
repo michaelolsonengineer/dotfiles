@@ -162,7 +162,7 @@ gdiffstathash() {
 
 gresolveconflict() {
   local strategry=$1
-  local pattern=$2
+  local pattern="$2"
   local file
   local selectedConflictFiles
 
@@ -176,11 +176,10 @@ gresolveconflict() {
     *) echo "Need to specify checkout strategy to be either: (theirs, ours)" && exit -1;;
   esac
 
-  selectedConflictFiles=$(git diff --name-only --diff-filter=U)
-  [ -n "$pattern" ] && selectedConflictFiles=$(echo $selectedConflictFiles | grep $pattern)
+  selectedConflictFiles=$(git --no-pager diff --name-only --diff-filter=U | grep $pattern)
 
   for file in $selectedConflictFiles; do
-    git checkout --$strategry $file
+    git checkout --${strategry} $file
     git add $file
     echo "Resolved: $file"
   done
