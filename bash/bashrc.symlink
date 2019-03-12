@@ -153,6 +153,8 @@ export NPM_PACKAGES=~/.npm-packages
 npm config set prefix "$NPM_PACKAGES"
 export NODE_PATH=$NPM_PACKAGES/lib/node_modules:$NODE_PATH
 
+export SPARK_HOME=/usr/local/spark
+
 # Unset manpath so we can inherit from /etc/manpath via the `manpath` command
 unset MANPATH # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
@@ -172,6 +174,7 @@ export PATH=$PATH:~/git/iOS-checkIPA
 export PATH=$PATH:/opt/microchip/xc8/v1.33/bin
 export PATH=$PATH:/opt/microchip/xc16/v1.22/bin
 export PATH=$PATH:/opt/microchip/xc32/v1.33/bin
+export PATH=$PATH:$SPARK_HOME/bin
 # export PATH=$PATH:~/current/p4/deckard-65x/developer/trunk/host/linux/x86/usr/bin
 # export PATH=$PATH:~/p4/dev/armos/tools/bb10_ramdump/linux
 # export PATH=$PATH:~/p4/dev/armos/tools/bb10_ramdump/scripts
@@ -203,3 +206,6 @@ else
 fi
 unset __conda_setup
 # <<< conda init <<<
+
+PY4J_SRC=$(find $SPARK_HOME/python/lib -name py4j*)
+export PYTHONPATH=$PY4J_SRC:$SPARK_HOME/python/lib:$PYTHONPATH

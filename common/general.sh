@@ -237,3 +237,14 @@ fi
 if [ "$CURRENT_SHELL" = "bash" ]; then
     complete -F _upto upto
 fi
+
+snotebook() {
+    export PYSPARK_DRIVER_PYTHON="jupyter"
+    export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
+
+    # # For python 3 users, you have to add the line below or you will get an error 
+    # IS_PYTHON_3=$(python --version 2>&1 | grep -i "Python 3")
+    # [ -n "$IS_PYTHON_3" ] && export PYSPARK_PYTHON=python3
+
+    $SPARK_HOME/bin/pyspark --master local[2]
+}
