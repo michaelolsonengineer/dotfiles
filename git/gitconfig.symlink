@@ -177,9 +177,6 @@
 [color "sh"]
     branch = yellow
 
-[pack]
-    windowMemory = 1g
-
 [push]
     # push will only do the current branch, not all branches
     default = current
@@ -192,11 +189,14 @@
     # do not warn about missing whitespace at EOF
     whitespace = nowarn
 
-#[pack]
-#    threads = 1
-#    deltaCacheSize = 128m
-#    packSizeLimit = 128m
-#    windowMemory = 128m
+[pack]
+   windowMemory = 1g
+
+# [pack]
+#     threads = 1
+#     deltaCacheSize = 256m
+#     packSizeLimit = 256m
+#     windowMemory = 256m
 
 [core]
     pager = less -FXRS -x2
@@ -209,9 +209,9 @@
     ignorecase = false
     precomposeunicode = false
     excludesfile = ~/.gitignore_global
-    # compression = 0
-    # packedGitLimit = 128m
-    # packedGitWindowSize = 128m
+    #compression = 0
+    # packedGitLimit = 256m
+    # packedGitWindowSize = 256m
 
 [rerere]
     enabled = true
@@ -224,6 +224,7 @@
     lineNumber = true
 
 [http]
+    followRedirects = true
     postBuffer = 1048576000
     # maxRequestBuffer = 128M
 
@@ -298,4 +299,6 @@
     auto = 0
 
 [receive]
-	denyCurrentBranch = updateInstead
+    denyCurrentBranch = updateInstead
+
+	
