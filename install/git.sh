@@ -1,10 +1,17 @@
 #!/bin/sh
 
+if [ -e "$HOME/.gitconfig" ]; then
+	read -n 1 -p "Overwrite ~/.gitconfig? [y/N] " save
+	if [[ $save =~ ^([Nn])$ ]]; then
+	     return
+	fi
+fi
+
 printf "Setting up Git...\n\n"
 
-defaultName=$( git config --global user.name )
-defaultEmail=$( git config --global user.email )
-defaultGithub=$( git config --global github.user )
+defaultName=$(git config --global user.name)
+defaultEmail=$(git config --global user.email)
+defaultGithub=$(git config --global github.user)
 
 read -p "Name [$defaultName] " name
 read -p "Email [$defaultEmail] " email

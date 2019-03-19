@@ -2,6 +2,20 @@
 
 DOTFILES=$HOME/.dotfiles
 
+if [ -e "$HOME/.bashrc" ]; then
+    read -n 1 -p "Overwrite ~/.bashrc? [y/N] " save
+    if [[ $save =~ ^([Yy])$ ]]; then
+         rm -f ~/.bashrc
+    fi
+fi
+
+if [ -e "$HOME/.zshrc" ]; then
+    read -n 1 -p "Overwrite ~/.zshrc? [y/N] " save
+    if [[ $save =~ ^([Yy])$ ]]; then
+         rm -f ~/.zshrc
+    fi
+fi
+
 echo -e "\nCreating symlinks"
 echo "=============================="
 linkables=$( find -H "$DOTFILES" -maxdepth 3 -name '*.symlink' )
@@ -14,7 +28,7 @@ for file in $linkables ; do
         ln -s $file $target
     fi
 done
-
+ls
 ln -s $DOTFILES/bin $HOME/bin
 
 echo -e "\n\ninstalling to ~/.config"
@@ -34,25 +48,31 @@ for config in $DOTFILES/config/*; do
     fi
 done
 
-# create vim symlinks
-# As I have moved off of vim as my full time editor in favor of neovim,
-# I feel it doesn't make sense to leave my vimrc intact in the dotfiles repo
-# as it is not really being actively maintained. However, I would still
-# like to configure vim, so lets symlink ~/.vimrc and ~/.vim over to their
-# neovim equivalent.
 
-echo -e "\n\nCreating vim symlinks"
-echo "=============================="
-VIMFILES=( "$HOME/.vim:$DOTFILES/vim/.vim"
-        "$HOME/.vimrc:$DOTFILES/vim/.vimrc" )
+if [ -e "$HOME/.vim_runtime/install_awesome_vimrc.sh" ]; then
+    $HOME/.vim_runtime/install_awesome_vimrc.sh
+else
+    # create vim symlinks
+    # As I have moved off of vim as my full time editor in favor of neovim,
+    # I feel it doesn't make sense to leave my vimrc intact in the dotfiles repo
+    # as it is not really being actively maintained. However, I would still
+    # like to configure vim, so lets symlink ~/.vimrc and ~/.vim over to their
+    # neovim equivalent.
 
-for file in "${VIMFILES[@]}"; do
-    KEY=${file%%:*}
-    VALUE=${file#*:}
-    if [ -e ${KEY} ]; then
-        echo "${KEY} already exists... skipping."
-    else
-        echo "Creating symlink for $KEY"
-        ln -s ${VALUE} ${KEY}
-    fi
-done
+    echo -e "\n\nCreating vim symlinks"
+    echo "=============================="
+    VIMFILES=( "$HOME/.vim:$DOTFILES/vim/.vim:$DOTFILES/vim/.vim"
+            "$HOME/.vimrc:$DOTFILES/vim/.vimrc" )
+
+    for file in "${VIMFILES[@]}"; do
+        KEY=${file%%:*}
+        VALUE=${file#*:}
+        if [ -e ${KEY} ]; then
+            echo "${KEY} already exists... skipping."
+        else
+            echo "Creating symlink for $KEY"
+            ln -s ${VALUE} ${KEY}
+        fi
+    done
+fi
+

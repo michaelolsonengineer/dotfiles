@@ -8,7 +8,7 @@ if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ]; then
   export SESSION_TYPE=remote/ssh
 # many other tests omitted
 else
-  case $(ps -o comm= -p $PPID) in
+  case $(ps -o comm= -p $PPID 2>/dev/null) in
     sshd|*/sshd) export SESSION_TYPE=remote/ssh;;
   esac
 fi

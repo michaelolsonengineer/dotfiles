@@ -1,6 +1,6 @@
 export DOTFILES=~/.dotfiles
 export ZSH=$DOTFILES/zsh
-export CURRENT_SHELL=$(ps -p $$ | awk '$1 == PP {print $4}' PP=$$)
+export CURRENT_SHELL=$(ps -p $$ 2>/dev/null | awk '$1 == PP {print $4}' PP=$$)
 
 command_exists() { type "$1" > /dev/null 2>&1; }
 
@@ -134,9 +134,11 @@ export NPM_PACKAGES=~/.npm-packages
 npm config set prefix "$NPM_PACKAGES"
 export NODE_PATH=$NPM_PACKAGES/lib/node_modules:$NODE_PATH
 
-# Unset manpath so we can inherit from /etc/manpath via the `manpath` command
-unset MANPATH # delete if you already modified MANPATH elsewhere in your config
-export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
+if [ -n "$(which manpath 2>/dev/null)" ]; then
+    # Unset manpath so we can inherit from /etc/manpath via the `manpath` command
+    unset MANPATH # delete if you already modified MANPATH elsewhere in your config
+    export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
+fi
 
 export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
@@ -185,3 +187,8 @@ else
 fi
 unset __conda_setup
 # <<< conda init <<<
+
+if [ -e "$SPARK_HOME" ]; then
+    PY4J_SRC=$(find $SPARK_HOME/python/lib -name py4j*)
+    export PYTHONPATH=$PY4J_SRC:$SPARK_HOME/python/lib:$PYTHONPATH
+fi

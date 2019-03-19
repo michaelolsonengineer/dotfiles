@@ -13,6 +13,9 @@ source install/link.sh
 
 source install/git.sh
 
+tic resources/tmux-256color-italic.terminfo
+tic resources/xterm-256color-italic.terminfo
+
 # only perform macOS-specific install
 if [ "$(uname)" == "Darwin" ]; then
     echo -e "\n\nRunning on OSX"
@@ -35,7 +38,7 @@ fi
 # mkdir -p ~/.vim-tmp
 
 if ! command_exists zsh; then
-    echo "zsh not found. Please install and then re-run installation scripts"
+    echo "zsh not found. Please install and then re-run installation scripts if using zsh else Reload your terminal. (. ~/.bashrc)"
     exit 1
 elif ! [[ $SHELL =~ .*zsh.* ]]; then
     echo "Configuring zsh as default shell"
@@ -47,4 +50,4 @@ if ! command_exists zplug; then
     git clone https://github.com/zplug/zplug ~/.zplug
 fi
 
-echo "Done. Reload your terminal."
+echo "Done. Reload your terminal. (. ~/.bashrc) or (. ~/.zsh)"
