@@ -4,6 +4,50 @@
 # Docker alias and function
 # ------------------------------------
 
+# if [ "$CURRENT_SHELL" = "bash" ]; then
+#     source $DOTFILES/bash/docker-completion.bash
+# elif [ "$CURRENT_SHELL" = "zsh" ]; then
+#     source $DOTFILES/zsh/function/_docker
+# fi
+
+# Usage:
+#   docker_alias_completion_wrapper <completion function> <alias/function name>
+#
+# Example:
+#   dock-ip() { docker inspect --format '{{ .NetworkSettings.IPAddress }}' $@ ;}
+#   docker_alias_completion_wrapper __docker_complete_containers_running dock-ip
+docker_alias_completion_wrapper() {
+  local completion_function="$1";
+  local alias_name="$2";
+
+  local func=$(cat <<EOT
+    # Generate a new completion function name
+    function _$alias_name() {
+        # Start off like _docker()
+        local previous_extglob_setting=\$(shopt -p extglob);
+        shopt -s extglob;
+
+        # Populate \$cur, \$prev, \$words, \$cword
+        _get_comp_words_by_ref -n : cur prev words cword;
+
+        # Declare and execute
+        declare -F $completion_function >/dev/null && $completion_function;
+
+        eval "\$previous_extglob_setting";
+        return 0;
+    };
+EOT
+  );
+  eval "$func";
+
+  # Register the alias completion function
+  complete -F _$alias_name $alias_name
+}
+
+if [ "$CURRENT_SHELL" = "bash" ]; then
+   export -f docker_alias_completion_wrapper
+fi
+
 docker_alias() {
     docker run \
         --rm \
@@ -27,6 +71,7 @@ dkbash() {
         --interactive \
         --tty \
         --env TERM=xterm-256color \
+	--publish 8888:8888 \
         --volume ~/.ssh:/var/shared/.ssh \
         --volume ~/.bash_history:/var/shared/.bash_history \
         --volume ~/.subversion:/var/shared/.subversion \
@@ -38,6 +83,26 @@ dkbash() {
         $@
 }
 
+dkbashp() {
+    dkbash --privileged $@
+}
+
+#docker_alias_completion_wrapper __docker_complete_containers_running dkbash
+
+dkcleanimg() {
+    local dangling_images=$(docker images --filter "dangling=true" -q --no-trunc)
+    if [ -n "$dangling_images" ]; then
+        docker rmi $dangling_images
+    fi
+}
+
+dkcleanimg() {
+    local dangling_volumes=$(docker volume ls --filter 'dangling=true' -q)
+    if [ -n "$dangling_volumes" ]; then
+        docker volume rm $dangling_volumes
+    fi
+}
+
 # Stop all containers
 dkstopa() { docker stop $(docker ps -a -q); }
 
@@ -45,16 +110,18 @@ dkstopa() { docker stop $(docker ps -a -q); }
 dkrma() { docker rm $(docker ps -a -q); }
 
 # Remove all images
-dkri() { docker rmi $(docker images -q); }
+dkrmia() { docker rmi $(docker images --filter "dangling=true" -q); }
 
 # Dockerfile build, e.g., $dbu tcnksm/test 
 dkbuild() { docker build -t=$1 .; }
 
 # Show all alias related docker
-dkalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
+dkaliases() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
 
 # Bash into running container
-dkenter() { docker exec -it $(docker ps -aqf "name=$1") bash; }
+dkenter() { docker exec -it -v $(pwd):$1 \ $(docker ps -aqf "name=$1") bash; }
+
+#docker_alias_completion_wrapper __docker_complete_containers_running dkenter
 
 # # JavaScript / CoffeeScript
 # alias node="docker_alias /directory node node"
@@ -103,10 +170,10 @@ alias pg_restore="docker_alias /directory postgres pg_restore"
 # LAMP
 alias lamp-here="docker_alias /var/www/html tutum/lamp"
 
+alias dkclean='dkcleanimg; dkcleanvol'
+
 alias dkatt='docker attach'
-alias dkcb='docker-compose build'
-alias dkclogs='docker-compose logs'
-alias dkcu='docker-compose up'
+alias dkbuild='docker build'
 alias dkdiff='docker diff'
 alias dkimg='docker images'
 alias dkins='docker inspect'
@@ -116,6 +183,20 @@ alias dkrmi='docker rmi'
 alias dkrun='docker run'
 alias dkstart='docker start'
 alias dkstop='docker stop'
+
+alias dkcbuild='docker-compose build'
+alias dkclogs='docker-compose logs'
+alias dkcup='docker-compose up'
+
+# __docker_complete_containers_running dkatt
+# __docker_complete_containers_running dkins
+# __docker_complete_containers_running dkrm
+# __docker_complete_containers_running dkrmi
+# __docker_complete_containers_running dkrm
+# __docker_complete_containers_running dkcu
+# __docker_complete_containers_running dkrun
+# __docker_complete_containers_running dkstart
+# __docker_complete_containers_running dkstop
 
 # Get latest container ID
 alias dklast="docker ps -l -q"
@@ -131,12 +212,15 @@ alias dki="docker images"
 
 # Get container IP
 alias dkip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+#__docker_complete_containers_running dkip
 
 # Run deamonized container, e.g., $dkd base /bin/echo hello
 alias dkd="docker run -d -P"
+#__docker_complete_containers_running dkd
 
 # Run interactive container, e.g., $dki base /bin/bash
 alias dki="docker run -i -t -P"
+#__docker_complete_containers_running dki
 
 alias dkls='
 echo "== docker images =="
@@ -145,54 +229,13 @@ echo -e "\n== docker volume ls =="
 docker volume ls
 echo -e "\n== docker container ls =="
 docker container ls
-echo -e "\n== docker service ls =="
-docker service ls
 echo -e "\n== docker ps -a =="
 docker ps -a
 '
 
-# Credit to <https://gist.github.com/bastman/5b57ddb3c11942094f8d0a97d461b430#remove-docker-images>
-alias dkclimg='docker rmi --force $(docker images --filter "dangling=true" -q --all --no-trunc)'
-alias docker_clean='docker rmi --force $(docker images --filter "dangling=true" -q --all --no-trunc)'
-
 # Credit to <https://stackoverflow.com/a/21928864/37776>
 alias dkrestartf='docker start $(docker ps -ql) && docker attach $(docker ps -ql)'
+#__docker_complete_containers_running dkrestartf
 
 # Stop and Remove all containers
-alias dkrmf='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
-
-
-# # Usage:
-# #   docker_alias_completion_wrapper <completion function> <alias/function name>
-# #
-# # Example:
-# #   dock-ip() { docker inspect --format '{{ .NetworkSettings.IPAddress }}' $@ ;}
-# #   docker_alias_completion_wrapper __docker_complete_containers_running dock-ip
-# docker_alias_completion_wrapper() {
-#   local completion_function="$1";
-#   local alias_name="$2";
-
-#   local func=$(cat <<EOT
-#     # Generate a new completion function name
-#     function _$alias_name() {
-#         # Start off like _docker()
-#         local previous_extglob_setting=\$(shopt -p extglob);
-#         shopt -s extglob;
-
-#         # Populate \$cur, \$prev, \$words, \$cword
-#         _get_comp_words_by_ref -n : cur prev words cword;
-
-#         # Declare and execute
-#         declare -F $completion_function >/dev/null && $completion_function;
-
-#         eval "\$previous_extglob_setting";
-#         return 0;
-#     };
-# EOT
-#   );
-#   eval "$func";
-
-#   # Register the alias completion function
-#   complete -F _$alias_name $alias_name
-# }
-# export -f docker_alias_completion_wrapper
+alias dkrmfa='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
