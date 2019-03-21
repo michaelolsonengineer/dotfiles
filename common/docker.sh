@@ -21,7 +21,7 @@ docker_alias() {
         ${@:2}
 }
 
-dbash() {
+dkbash() {
     docker run \
         --rm \
         --interactive \
@@ -39,7 +39,7 @@ dbash() {
 }
 
 # Stop all containers
-dstopa() { docker stop $(docker ps -a -q); }
+dkstopa() { docker stop $(docker ps -a -q); }
 
 # Remove all containers
 dkrma() { docker rm $(docker ps -a -q); }
@@ -64,11 +64,11 @@ dkenter() { docker exec -it $(docker ps -aqf "name=$1") bash; }
 # # PHP
 # alias php="docker_alias /directory php php"
 
-# # Ruby
-# alias ruby="docker_alias /directory ruby ruby"
+# Ruby
+alias ruby="docker_alias /directory ruby ruby"
 
-# alias rails="docker_alias /directory rails rails"
-# alias rake="docker_alias /directory rails rake"
+alias rails="docker_alias /directory rails rails"
+alias rake="docker_alias /directory rails rake"
 
 # # Python
 # alias python2.7="docker_alias /directory python:2.7 python"
@@ -76,32 +76,32 @@ dkenter() { docker exec -it $(docker ps -aqf "name=$1") bash; }
 
 # alias django-admin.py="docker_alias /directory django django-admin.py"
 
-# # Redis
-# alias redis-cli="docker_alias /directory redis redis-cli"
-# alias redis-server="docker_alias /directory redis redis-server"
+# Redis
+alias redis-cli="docker_alias /directory redis redis-cli"
+alias redis-server="docker_alias /directory redis redis-server"
 
-# alias redis-benchmark="docker_alias /directory redis redis-benchmark"
-# alias redis-check-dump="docker_alias /directory redis redis-check-dump"
-# alias redis-check-aof="docker_alias /directory redis redis-check-aof"
-# alias redis-sentinel="docker_alias /directory redis redis-sentinel"
+alias redis-benchmark="docker_alias /directory redis redis-benchmark"
+alias redis-check-dump="docker_alias /directory redis redis-check-dump"
+alias redis-check-aof="docker_alias /directory redis redis-check-aof"
+alias redis-sentinel="docker_alias /directory redis redis-sentinel"
 
 # # MongoDB
 # alias mongo="docker_alias /directory mongo mongo"
 # alias mongod="docker_alias /directory mongo mongod"
 
-# # Postgres
-# alias postgres="docker_alias /directory postgres postgres"
-# alias psql="docker_alias /directory postgres psql"
+# Postgres
+alias postgres="docker_alias /directory postgres postgres"
+alias psql="docker_alias /directory postgres psql"
 
-# alias pg_dump="docker_alias /directory postgres pg_dump"
-# alias pg_dumpall="docker_alias /directory postgres pg_dumpall"
-# alias pg_restore="docker_alias /directory postgres pg_restore"
+alias pg_dump="docker_alias /directory postgres pg_dump"
+alias pg_dumpall="docker_alias /directory postgres pg_dumpall"
+alias pg_restore="docker_alias /directory postgres pg_restore"
 
 # # Nginx
 # alias nginx="docker_alias /usr/share/nginx/html nginx nginx"
 
-# # LAMP
-# alias lamp-here="docker_alias /var/www/html tutum/lamp"
+# LAMP
+alias lamp-here="docker_alias /var/www/html tutum/lamp"
 
 alias dkatt='docker attach'
 alias dkcb='docker-compose build'
@@ -118,12 +118,12 @@ alias dkstart='docker start'
 alias dkstop='docker stop'
 
 # Get latest container ID
-alias dkl="docker ps -l -q"
+alias dklast="docker ps -l -q"
 
 # Get container process
 alias dkps="docker ps"
 
-# Get process included stop container
+# Get all processes including stop containers
 alias dkpa="docker ps -a"
 
 # Get images
@@ -161,3 +161,38 @@ alias dkrestartf='docker start $(docker ps -ql) && docker attach $(docker ps -ql
 # Stop and Remove all containers
 alias dkrmf='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
 
+
+# # Usage:
+# #   docker_alias_completion_wrapper <completion function> <alias/function name>
+# #
+# # Example:
+# #   dock-ip() { docker inspect --format '{{ .NetworkSettings.IPAddress }}' $@ ;}
+# #   docker_alias_completion_wrapper __docker_complete_containers_running dock-ip
+# docker_alias_completion_wrapper() {
+#   local completion_function="$1";
+#   local alias_name="$2";
+
+#   local func=$(cat <<EOT
+#     # Generate a new completion function name
+#     function _$alias_name() {
+#         # Start off like _docker()
+#         local previous_extglob_setting=\$(shopt -p extglob);
+#         shopt -s extglob;
+
+#         # Populate \$cur, \$prev, \$words, \$cword
+#         _get_comp_words_by_ref -n : cur prev words cword;
+
+#         # Declare and execute
+#         declare -F $completion_function >/dev/null && $completion_function;
+
+#         eval "\$previous_extglob_setting";
+#         return 0;
+#     };
+# EOT
+#   );
+#   eval "$func";
+
+#   # Register the alias completion function
+#   complete -F _$alias_name $alias_name
+# }
+# export -f docker_alias_completion_wrapper
