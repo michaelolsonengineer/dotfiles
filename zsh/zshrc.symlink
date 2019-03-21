@@ -11,8 +11,8 @@ command_exists() { type "$1" > /dev/null 2>&1; }
 [ -d ~/code ] && export CODE_DIR=~/code
 
 # initialize autocomplete
-autoload -U compinit add-zsh-hook
-compinit
+autoload -Uz compinit add-zsh-hook
+compinit -i
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -189,6 +189,6 @@ unset __conda_setup
 # <<< conda init <<<
 
 if [ -e "$SPARK_HOME" ]; then
-    PY4J_SRC=$(find $SPARK_HOME/python/lib -name py4j*)
+    PY4J_SRC=$(find $SPARK_HOME/python/lib -name "py4j*")
     export PYTHONPATH=$PY4J_SRC:$SPARK_HOME/python/lib:$PYTHONPATH
 fi

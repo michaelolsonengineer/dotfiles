@@ -4,11 +4,13 @@
 # Docker alias and function
 # ------------------------------------
 
-# if [ "$CURRENT_SHELL" = "bash" ]; then
-#     source $DOTFILES/bash/docker-completion.bash
-# elif [ "$CURRENT_SHELL" = "zsh" ]; then
-#     source $DOTFILES/zsh/function/_docker
-# fi
+alias dk=docker
+
+if [ "$CURRENT_SHELL" = "bash" ]; then
+    complete -F _docker dk
+elif [ "$CURRENT_SHELL" = "zsh" ]; then
+    compdef dk=docker
+fi
 
 # Usage:
 #   docker_alias_completion_wrapper <completion function> <alias/function name>
@@ -41,7 +43,9 @@ EOT
   eval "$func";
 
   # Register the alias completion function
-  complete -F _$alias_name $alias_name
+  if [ "$CURRENT_SHELL" = "bash" ]; then
+        complete -F _$alias_name $alias_name
+  fi 
 }
 
 if [ "$CURRENT_SHELL" = "bash" ]; then
@@ -71,7 +75,7 @@ dkbash() {
         --interactive \
         --tty \
         --env TERM=xterm-256color \
-	--publish 8888:8888 \
+	    --publish 8888:8888 \
         --volume ~/.ssh:/var/shared/.ssh \
         --volume ~/.bash_history:/var/shared/.bash_history \
         --volume ~/.subversion:/var/shared/.subversion \
@@ -188,15 +192,15 @@ alias dkcbuild='docker-compose build'
 alias dkclogs='docker-compose logs'
 alias dkcup='docker-compose up'
 
-# __docker_complete_containers_running dkatt
-# __docker_complete_containers_running dkins
-# __docker_complete_containers_running dkrm
-# __docker_complete_containers_running dkrmi
-# __docker_complete_containers_running dkrm
-# __docker_complete_containers_running dkcu
-# __docker_complete_containers_running dkrun
-# __docker_complete_containers_running dkstart
-# __docker_complete_containers_running dkstop
+docker_alias_completion_wrapper __docker_complete_images dkrmi
+docker_alias_completion_wrapper __docker_complete_images dkrun
+
+docker_alias_completion_wrapper __docker_complete_containers_running dkatt
+docker_alias_completion_wrapper __docker_complete_containers_running dkins
+docker_alias_completion_wrapper __docker_complete_containers_stoppable dkstop
+
+docker_alias_completion_wrapper __docker_complete_containers_removable dkrm
+docker_alias_completion_wrapper __docker_complete_containers_unpauseable dkstart
 
 # Get latest container ID
 alias dklast="docker ps -l -q"
@@ -239,3 +243,5 @@ alias dkrestartf='docker start $(docker ps -ql) && docker attach $(docker ps -ql
 
 # Stop and Remove all containers
 alias dkrmfa='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
+
+alias dkkillall="docker ps -q | xargs docker kill"
