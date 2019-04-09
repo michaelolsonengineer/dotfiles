@@ -190,13 +190,13 @@
     whitespace = nowarn
 
 [pack]
-   windowMemory = 1g
-
-# [pack]
-#     threads = 1
-#     deltaCacheSize = 256m
-#     packSizeLimit = 256m
-#     windowMemory = 256m
+     ## Toggle if connecting to slow and large git network
+     # threads = 1
+     # deltaCacheSize = 256m
+     # packSizeLimit = 256m
+     # windowMemory = 256m
+     ##END
+     windowMemory = 1g
 
 [core]
     pager = less -FXRS -x2
@@ -209,9 +209,11 @@
     ignorecase = false
     precomposeunicode = false
     excludesfile = ~/.gitignore_global
-    #compression = 0
+    ## Toggle if connecting to slow and large git network
+    # compression = 0
     # packedGitLimit = 256m
     # packedGitWindowSize = 256m
+    ##END
 
 [rerere]
     enabled = true
@@ -225,8 +227,9 @@
 
 [http]
     followRedirects = true
-    postBuffer = 1048576000
-    # maxRequestBuffer = 128M
+    postBuffer = 134217728
+    sslverify = false
+    # maxRequestBuffer = 256m
 
 [gitflow "branch"]
     master = master
