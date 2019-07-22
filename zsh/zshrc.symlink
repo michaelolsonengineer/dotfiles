@@ -38,7 +38,7 @@ if [ -e ~/.personalrc ]; then
     source ~/.personalrc
 fi
 
-[ -z "$TMUX" ] && export TERM=xterm-256color-italic
+[ -z "$TMUX" ] && export TERM=xterm-256color
 
 # add ruby environment if installed
 if command_exists rbenv; then
@@ -92,6 +92,7 @@ if [[ "$LINUX_VERSION" =~ "Ubuntu 18.04" ]]; then
     export LANG=C
 
     alias svn="LC_ALL=C svn"
+    alias sam="LC_ALL=C.UTF-8 LANG=C.UTF-8 sam"
 fi
 
 # Compilation flags
@@ -168,7 +169,7 @@ export PATH=$PATH:/opt/microchip/xc32/v1.33/bin
 # export PATH=$PATH:/opt/tools/klocwork/bin
 
 # Verion could be 2 or 3
-export PYTHON_VERSION=2
+export PYTHON_VERSION=3
 export ANACONDA_PYTHON_VERSION=$PYTHON_VERSION
 export ANACONDA_DIR=/opt/anaconda$ANACONDA_PYTHON_VERSION
 # added by Anaconda$ANACONDA_PYTHON_VERSION 5.3.0 installer

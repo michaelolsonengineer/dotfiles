@@ -100,7 +100,7 @@ dkcleanimg() {
     fi
 }
 
-dkcleanimg() {
+dkcleanvol() {
     local dangling_volumes=$(docker volume ls --filter 'dangling=true' -q)
     if [ -n "$dangling_volumes" ]; then
         docker volume rm $dangling_volumes

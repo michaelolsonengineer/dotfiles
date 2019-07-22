@@ -50,7 +50,7 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 [ -e ~/.terminfo ] && export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
-[ -z "$TMUX" ] && export TERM=xterm-256color-italic
+[ -z "$TMUX" ] && export TERM=xterm-256color
 
 export EDITOR='vim'
 export GIT_EDITOR='vim'
@@ -125,6 +125,7 @@ if [[ "$LINUX_VERSION" =~ "Ubuntu 18.04" ]]; then
     export LANG=
     export LC_ALL=C
     alias svn="LC_ALL=C svn"
+    alias sam="LC_ALL=C.UTF-8 LANG=C.UTF-8 sam"
 fi
 
 # vim
@@ -189,7 +190,7 @@ export PATH=$PATH:$SPARK_HOME/bin
 # export PATH=$PATH:$QCT_DEV_SCRIPTS/d65_int
 # export PATH=$PATH:/opt/tools/klocwork/bin
 
-export PYTHON_VERSION=2
+export PYTHON_VERSION=3
 export ANACONDA_PYTHON_VERSION=$PYTHON_VERSION
 export ANACONDA_DIR=/opt/anaconda$ANACONDA_PYTHON_VERSION
 # added by Anaconda$ANACONDA_PYTHON_VERSION 5.3.0 installer

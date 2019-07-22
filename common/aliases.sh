@@ -243,6 +243,8 @@ alias vis='vim "+set si"'
 alias evi="vim -o "
 alias Evi="vim -O "
 
+alias subl="LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 subl"
+
 #-----------
 # Media:
 #-----------
