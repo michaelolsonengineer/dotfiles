@@ -6,7 +6,7 @@ zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower
 zstyle ':completion:*' insert-tab pending
 
 # default to file completion
-zstyle ':completion:*' completer _expand _complete _files _correct _approximate
+zstyle ':completion:*' completer _list _expand _complete _ignored _correct _approximate _files
 
 if [[ "$OSTYPE" == darwin* ]]; then
 	# this is specific to the location of the current version of git, installed by homebrew
@@ -17,3 +17,8 @@ if [[ "$OSTYPE" == darwin* ]]; then
 	fi
 fi
 
+zstyle :compinstall filename "$HOME/.zshrc"
+
+# initialize autocomplete
+autoload -Uz compinit
+compinit
