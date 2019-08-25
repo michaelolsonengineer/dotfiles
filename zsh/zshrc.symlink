@@ -10,9 +10,15 @@ command_exists() { type "$1" > /dev/null 2>&1; }
 # This is where my code exists and where I want the `c` autocomplete to work from exclusively
 [ -d ~/code ] && export CODE_DIR=~/code
 
-# initialize autocomplete
-autoload -Uz compinit add-zsh-hook
-compinit -i
+# zplug config
+export ZPLUG_LOADFILE=$DOTFILES/zsh/zplug.sh
+
+# only source zplug on initial load
+if [ -z "$RELOAD" ]; then
+    if ! [ type "zplug" > /dev/null 2>&1 ]; then
+        source ~/.zplug/init.zsh
+    fi
+fi
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -53,16 +59,6 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-# zplug config
-export ZPLUG_LOADFILE=$DOTFILES/zsh/zplug.sh
-
-# only source zplug on initial load
-if [ -z "$RELOAD" ]; then
-    if ! [ type "zplug" > /dev/null 2>&1 ]; then
-        source ~/.zplug/init.zsh
-    fi
-fi
 
 if hash brew 2>/dev/null; then
     source `brew --prefix`/etc/profile.d/z.sh
