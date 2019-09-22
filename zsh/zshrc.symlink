@@ -81,10 +81,10 @@ if [[ "$LINUX_VERSION" =~ "Ubuntu 18.04" ]]; then
 # unset LANG
 # locale-gen en_US.UTF-8
 
-    #export LANG=en_US.UTF-8
+    export LANG=en_US.UTF-8  # this needs to be set to utf, otherwise it wreaks havoc on autocomplete
     #export LC_ALL=en_US.UTF-8
     #export LC_ALL=$(locale -a | grep UTF-8)
-    export LC_ALL=
+    #export LC_ALL=
     export LANG=C
 
     alias svn="LC_ALL=C svn"
