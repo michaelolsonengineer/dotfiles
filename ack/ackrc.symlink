@@ -7,35 +7,40 @@
 
 # only search with case-sensitivity if there is mixed case
 --smart-case
+
 # follow symlinks
 --follow
+
+# Sort the found files lexically.
+--sort-files
+
+# Print a filename heading above each file
+# Print a break between results from different files
+--group
 
 # show columns along with line number
 --column
 
-# added file types
---type-set=css=.css,.less,.scss,.styl
---type-set=styl=.styl
---type-set=less=.less
---type-set=html=.html,.mustache,.handlebars,.tmpl
---type-set=json=.json
---type-set=md=.markdown,.md
---type-set=svg=.svg
---type-set=ts=.ts
---type-set=js=.js,.jsx
---type-set=jsx=.jsx
---type-set=style=.scss,.sass,.styl,.less,.css
---type-set=log=.log
-
 # ignore directories
+--ignore-dir=log
+--ignore-dir=tmp
+--ignore-dir=bin
+--ignore-dir=vendor/bundle
+--ignore-dir=results
+--ignore-dir=coverage
 --ignore-dir=node_modules
 --ignore-dir=bower_components
 --ignore-dir=venv
 --ignore-dir=node
 --ignore-dir=build
 --ignore-dir=gen
+--ignore-dir=dist
+--ignore-dir=nto
+--ignore-dir=arm
+--ignore-dir=out
+--ignore-dir=_site
+--ignore-dir=.bundle
 --ignore-dir={.bzr,.cvs,.git,.hg,.svn,.repo,.aws-sam}
---ignore-dir={tmp,bin,build,dist,nto,arm,}
 
 # ignore files
 --ignore-file=is:cscope.out
@@ -48,8 +53,11 @@
 --ignore-file=ext:mbn
 --ignore-file=ext:exe
 
-# no archives
+# no binaries
 --ignore-file=ext:a
+--ignore-file=ext:o
+--ignore-file=ext:class
+--ignore-file=ext:pyc
 
 # no libraries
 --ignore-file=ext:lib
@@ -61,9 +69,8 @@
 --ignore-file=ext:msm
 --ignore-file=ext:msp
 
-# Python
+# Python # Distribution / packaging
 --ignore-dir=__pycache__
-# Distribution / packaging
 --ignore-file=is:.Python
 --ignore-dir=develop-eggs
 --ignore-dir=dist
@@ -71,18 +78,10 @@
 --ignore-dir=.eggs
 --ignore-dir=lib
 --ignore-dir=lib64
---ignore-dir=wheels/
---ignore-dir=*.egg-info/
+--ignore-dir=wheels
+--ignore-dir=match:.egg-info
 --ignore-file=is:.installed.cfg
 --ignore-file=ext:egg
-
-# Eclipse
---ignore-file=is:.classpath
---ignore-file=is:.project
---ignore-file=is:.pydevproject
---ignore-dir=.settings
---ignore-file=is:.buildpath
---ignore-dir=atlassian-ide-plugin.xml
 
 # General files
 --ignore-file=ext:tmp
@@ -92,13 +91,39 @@
 # Ruby
 --ignore-dir=.rakeTasks
 
+# CMake
+--ignore-dir=cmake-build-debug
+
+
+# added file types
+--type-set=less=.less
+--type-set=log=.log
+--type-add=objc=.m,.h,.pch
+--type-set=coffee=.coffee
+--type-set=html=.html,.mustache,.handlebars,.tmpl,.xhtml
+--type-set=javascript=.js,.jsx,.coffee
+--type-set=md=.markdown,.md
+--type-set=nib=.xib
+--type-set=plist=.plist
+--type-set=pug=.pug
+--type-set=style=.scss,.sass,.styl,.less,.css
+--type-set=tmstuff=.tmproj,.tm_build_errors
+--type-set=xcode=.pbxproj,.pbxuser,.perspectivev3
 
 # Intellij  stuff:
 --ignore-dir=.idea
---ignore-dir=out
 --ignore-dir=.idea_modules
 --ignore-file=ext:iml
 --ignore-file=ext:iws
 
-# CMake
---ignore-dir=cmake-build-debug
+# Eclipse
+--ignore-file=is:.classpath
+--ignore-file=is:.project
+--ignore-file=is:.pydevproject
+--ignore-dir=.settings
+--ignore-file=is:.buildpath
+--ignore-dir=atlassian-ide-plugin.xml
+
+--nonib
+--notmstuff
+--noxcode
