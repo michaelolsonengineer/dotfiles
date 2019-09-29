@@ -33,3 +33,37 @@ open_command() {
 }
 
 alias o="open_command"
+
+# prefer ack, but always good to know grep especially in embedded world
+grp() {
+    # local GREP_OPTIONS=""
+    # local VCS_FOLDERS="{.bzr,.cvs,.git,.hg,.svn,.repo}"
+    # local TEMP_FOLDERS="{tmp,bin,build,dist,nto,arm}"
+    # local DATA_FILES="{tags,cscope.out,cctree.out}"
+    # local VERSION_FILES="\*.{0,1,2}"
+
+    # if grep-flag-available --exclude-dir=.cvs; then
+    #     GREP_OPTIONS+=" --exclude-dir=$VCS_FOLDERS"
+    #     GREP_OPTIONS+=" --exclude-dir=$TEMP_FOLDERS"
+    # elif grep-flag-available --exclude=.cvs; then
+    #     GREP_OPTIONS+=" --exclude=$VCS_FOLDERS"
+    #     GREP_OPTIONS+=" --exclude=$TEMP_FOLDERS"
+    # fi
+
+    # if grep-flag-available --exclude=tags; then
+    #     GREP_OPTIONS+=" --exclude=$DATA_FILES"
+    #     GREP_OPTIONS+=" --exclude=$VERSION_FILES"
+    # fi
+
+    /bin/grep \
+        --color=auto \
+        --recursive \
+        --binary-files=without-match \
+        --line-number \
+        --with-filename \
+        --exclude-dir={.bzr,.cvs,.git,.hg,.svn,.repo,.aws-sam} \
+        --exclude-dir={tmp,bin,build,dist,nto,arm,venv} \
+        --exclude={tags,cscope.out,cctree.out} \
+        --exclude=\*.{0,1,2} \
+        "$@"
+}

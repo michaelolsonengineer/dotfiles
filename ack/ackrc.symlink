@@ -1,14 +1,17 @@
 # General ack Settings
 ##########################################################
 
+# these are done by default so they will be commented out as reference
+#--color
+#--with-filename
+
 # only search with case-sensitivity if there is mixed case
 --smart-case
 # follow symlinks
 --follow
 
-# ignore directories
---ignore-dir=node_modules
---ignore-dir=bower_components
+# show columns along with line number
+--column
 
 # added file types
 --type-set=css=.css,.less,.scss,.styl
@@ -22,3 +25,80 @@
 --type-set=js=.js,.jsx
 --type-set=jsx=.jsx
 --type-set=style=.scss,.sass,.styl,.less,.css
+--type-set=log=.log
+
+# ignore directories
+--ignore-dir=node_modules
+--ignore-dir=bower_components
+--ignore-dir=venv
+--ignore-dir=node
+--ignore-dir=build
+--ignore-dir=gen
+--ignore-dir={.bzr,.cvs,.git,.hg,.svn,.repo,.aws-sam}
+--ignore-dir={tmp,bin,build,dist,nto,arm,}
+
+# ignore files
+--ignore-file=is:cscope.out
+--ignore-file=is:tags
+--ignore-file=is:cctree.out
+--ignore-file=ext:0
+--ignore-file=ext:1
+--ignore-file=ext:2
+--ignore-file=ext:bin
+--ignore-file=ext:mbn
+--ignore-file=ext:exe
+
+# no archives
+--ignore-file=ext:a
+
+# no libraries
+--ignore-file=ext:lib
+--ignore-file=ext:so
+
+# Window Installers
+--ignore-file=ext:cab
+--ignore-file=ext:msi
+--ignore-file=ext:msm
+--ignore-file=ext:msp
+
+# Python
+--ignore-dir=__pycache__
+# Distribution / packaging
+--ignore-file=is:.Python
+--ignore-dir=develop-eggs
+--ignore-dir=dist
+--ignore-dir=eggs
+--ignore-dir=.eggs
+--ignore-dir=lib
+--ignore-dir=lib64
+--ignore-dir=wheels/
+--ignore-dir=*.egg-info/
+--ignore-file=is:.installed.cfg
+--ignore-file=ext:egg
+
+# Eclipse
+--ignore-file=is:.classpath
+--ignore-file=is:.project
+--ignore-file=is:.pydevproject
+--ignore-dir=.settings
+--ignore-file=is:.buildpath
+--ignore-dir=atlassian-ide-plugin.xml
+
+# General files
+--ignore-file=ext:tmp
+--ignore-file=ext:bak
+--ignore-file=ext:ipynb
+
+# Ruby
+--ignore-dir=.rakeTasks
+
+
+# Intellij  stuff:
+--ignore-dir=.idea
+--ignore-dir=out
+--ignore-dir=.idea_modules
+--ignore-file=ext:iml
+--ignore-file=ext:iws
+
+# CMake
+--ignore-dir=cmake-build-debug
