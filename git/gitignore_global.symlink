@@ -21,6 +21,12 @@ Thumbs.db
 # project-specific vim configurations
 .vimrc.local
 
+# eclipse project files
+.project
+
+# intellij project files
+.idea 
+
 # typescript command garbage
 tscommand*.txt
 

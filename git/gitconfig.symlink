@@ -1,10 +1,10 @@
 # gitconfig
 [user]
     name = Michael P Olson
-    email = michael.olson@netcommwireless.com
+    email = molson35@ford.com
 
 [github]
-    user = michaelolsonengineer
+    user = molson35
 
 [gitlab]
     user = michaelolsonengineer
@@ -151,6 +151,12 @@
     spull = "!LAST_REV=`git svn find-rev $(git log --max-count 1 --pretty=format:%H))`; echo $LAST_REV; git-svn fetch -r$LAST_REV && git-svn rebase -l"
     spush = "!git-svn dcommit"
 
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+
 [color]
     diff = auto
     status = auto
@@ -230,6 +236,7 @@
     postBuffer = 134217728
     sslverify = false
     # maxRequestBuffer = 256m
+    proxy = http://internet.ford.com:83/
 
 [gitflow "branch"]
     master = master
