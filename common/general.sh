@@ -248,3 +248,66 @@ snotebook() {
 
     $SPARK_HOME/bin/pyspark --master local[2]
 }
+
+build_install_cmake() {
+  local version=${1:-3.12}
+  local build=${2:-3}
+  pushd $(mktemp -d)
+  wget https://cmake.org/files/v${version}/cmake-$version.$build.tar.gz
+  tar xzvf cmake-$version.$build.tar.gz
+  cd cmake-$version.$build/
+  ./bootstrap --qt-gui
+  make -j$(nproc)
+  sudo make install
+  popd
+}
+
+checkSizes() {
+  local extension=${1:-a}
+  local directory=${2:-.}
+  local unit=${3:-M}
+  find $directory -type f -name "$extension" -printf "%s\n" | awk -M '{t+=$1}END{print t}' | numfmt --to-unit=$unit 2>/dev/null || echo 0  
+}
+
+print_binary_sizes() {
+  local total=0
+  local ext_sizes
+  local extensions=(
+    "*.a"
+    "*.bin"
+    "*.o" 
+    "*.so" 
+    "*.so.*" 
+    "*.elf" 
+    "*.png" 
+    "*.jpg" 
+    "*.zip" 
+    "*.pgm" 
+    "*.gz" 
+    "*.xz" 
+    "*.tar" 
+    "*.bz2" 
+    "*.7z" 
+    "*.pb" 
+    "*.out" 
+    "*.lib" 
+    "*.dvl" 
+    "*.mudp" 
+    "*.tavi" 
+    "*.tflite" 
+  )
+
+  echo ""
+  echo "extension|total (MB)" | awk 'BEGIN { FS = "|" } ;{ printf "%-20s  %-40s\n", $1, $2 }'
+  printf '_%.0s' {1..35}
+  echo ""
+  for ext in "${extensions[@]}"; do
+     ext_sizes=$(checkSizes "$ext")
+     echo "${ext} ${ext_sizes}" | awk '{ printf "%-20s  %-40s\n", $1, $2 }'
+     (( total += ext_sizes ))
+  done
+  printf '_%.0s' {1..35}
+  echo ""
+  echo "total ${total}" | awk '{ printf "%-20s  %-60s\n", $1, $2 }'
+
+}

@@ -26,6 +26,7 @@
 --type-set=jsx=.jsx
 --type-set=style=.scss,.sass,.styl,.less,.css
 --type-set=log=.log
+--type-set=headers=.hpp .hh .h .hxx
 
 # ignore directories
 --ignore-dir=node_modules
@@ -47,6 +48,8 @@
 --ignore-file=ext:bin
 --ignore-file=ext:mbn
 --ignore-file=ext:exe
+--ignore-file=ext:pgm
+--ignore-file=ext:run
 
 # no archives
 --ignore-file=ext:a
@@ -83,6 +86,7 @@
 --ignore-dir=.settings
 --ignore-file=is:.buildpath
 --ignore-dir=atlassian-ide-plugin.xml
+--ignore-dir=.history
 
 # General files
 --ignore-file=ext:tmp
@@ -102,3 +106,7 @@
 
 # CMake
 --ignore-dir=cmake-build-debug
+
+# Tox
+--ignore-dir=.tox
+

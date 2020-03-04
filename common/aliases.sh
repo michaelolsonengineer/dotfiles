@@ -340,6 +340,8 @@ alias gpumeminfo="grep -i $colorflag memory /var/log/Xorg.0.log"
 alias df='df -H'
 alias du='du -ch'
 
+alias size_per_file="xargs -i{} stat --printf='%s\n' {}"
+
 #Grabs the disk usage in the current directory
 alias usage='du -csh 2> /dev/null'
 #Gets the total disk usage on your machine
@@ -574,6 +576,7 @@ alias wget='wget -c'
 #------------
 
 alias bc='bc -l'
+alias addcolumn="awk '{total = total + \$1}END{print total}'"
 
 #----------
 # Clean up:

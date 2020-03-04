@@ -25,7 +25,10 @@ Thumbs.db
 .project
 
 # intellij project files
-.idea 
+.idea
+
+# ignore visual studio project files
+.vscode/
 
 # typescript command garbage
 tscommand*.txt
@@ -60,3 +63,16 @@ dist
 *.bak
 .bzrignore
 .hgignore
+
+# IDEA (PyCharm & friends) project settings
+.idea/
+*.iml
+*.iws
+
+# Eclipse project settings
+.classpath
+.project
+.pydevproject
+.settings/
+.buildpath
+.history

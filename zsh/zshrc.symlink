@@ -104,6 +104,9 @@ export HALF_NUMBER_OF_CORES=$(printf "%1.f" "$(($NUMBER_OF_CORES/2))")
 # Java
 export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
+# Groovy
+export GROOVY_HOME=/opt/apache-groovy-2.5.8
+
 # Maven
 export M2_HOME=/usr/share/maven
 export M2=$M2_HOME/bin
@@ -148,6 +151,7 @@ export PATH=$PATH:~/tools
 export PATH=$PATH:~/tools/scripts
 export PATH=$PATH:$NPM_PACKAGES/bin
 export PATH=$PATH:$JAVA_HOME/bin
+export PATH=$PATH:$GROOVY_HOME/bin
 export PATH=$PATH:~/git/iOS-checkIPA
 export PATH=$PATH:/opt/microchip/xc8/v1.33/bin
 export PATH=$PATH:/opt/microchip/xc16/v1.22/bin
@@ -188,4 +192,15 @@ export PATH=$PATH:/opt/microchip/xc32/v1.33/bin
 if [ -e "$SPARK_HOME" ]; then
     PY4J_SRC=$(find $SPARK_HOME/python/lib -name "py4j*")
     export PYTHONPATH=$PY4J_SRC:$SPARK_HOME/python/lib:$PYTHONPATH
+fi
+
+export PATH=$HOME/.pyenv/shims:$HOME/.pyenv/bin:$PATH
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+
+if [ "$TERM_PROGRAM" = "Terminus-Sublime" ]; then
+    bindkey "\e[1;3C" forward-word
+    bindkey "\e[1;3D" backward-word
 fi
