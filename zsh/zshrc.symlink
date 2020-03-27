@@ -140,12 +140,12 @@ if [ -n "$(which manpath 2>/dev/null)" ]; then
     export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 fi
 
+export PATH=~/bin:$PATH
 export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
 export PATH=$PATH:/usr/local/sbin
 export PATH=$PATH:/usr/local/bin/p4v/bin
 export PATH=$PATH:~/local/bin
-export PATH=$PATH:~/bin
 export PATH=$PATH:~/scripts
 export PATH=$PATH:~/tools
 export PATH=$PATH:~/tools/scripts

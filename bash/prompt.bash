@@ -121,7 +121,7 @@ if [ "$color_prompt" = yes ]; then
     PS1="$PS1 ${PROMPT_L_GREEN}\$(parse_git_branch)"
     PS1="$PS1 ${PROMPT_YELLOW}\$(parse_svn_branch)"
     PS1="$PS1 ${PROMPT_WHITE}\$(suspended_jobs)"
-    PS1="$PS1 ${PROMPT_NORMAL}\n\$ "                                  # return to system default
+    PS1="$PS1 ${PROMPT_NORMAL}\n\$ "                                   # return to system default
                                                                        # \n the newline character
                                                                        # \$ if the effective UID is 0, a #, otherwise a $
 else

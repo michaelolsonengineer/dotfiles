@@ -196,13 +196,13 @@
     whitespace = nowarn
 
 [pack]
-     ## Toggle if connecting to slow and large git network
-     # threads = 1
-     # deltaCacheSize = 256m
-     # packSizeLimit = 256m
-     # windowMemory = 256m
-     ##END
-     windowMemory = 1g
+     # Toggle if connecting to slow and large git network
+     threads = 1
+     deltaCacheSize = 256m
+     packSizeLimit = 256m
+     windowMemory = 256m
+     #END
+     # windowMemory = 1g
 
 [core]
     pager = less -FXRS -x2
@@ -215,11 +215,11 @@
     ignorecase = false
     precomposeunicode = false
     excludesfile = ~/.gitignore_global
-    ## Toggle if connecting to slow and large git network
-    # compression = 0
-    # packedGitLimit = 256m
-    # packedGitWindowSize = 256m
-    ##END
+    # Toggle if connecting to slow and large git network
+    compression = 0
+    packedGitLimit = 256m
+    packedGitWindowSize = 256m
+    #END
 
 [rerere]
     enabled = true

@@ -33,10 +33,10 @@ unset formatAuthorEmail
 g() {
     if [[ $# > 0 ]]; then
         # if there are arguments, send them to git
-        git $@
+        git "$@"
     else
         # otherwise, run git status
-        git status
+        git status --short
     fi
 }
 
@@ -44,14 +44,14 @@ gs() {
     if [[ $# > 0 ]]; then
         # leave ghostscript alone
         # Ghostscript is an interpreter for PostScript™ and Portable Document Format (PDF) files.
-        /usr/bin/gs $@
+        /usr/bin/gs "$@"
     else
         # otherwise, run git status --short
-        git status --short
+        git status
     fi
 }
 
-gff() { git ls-files | grep $@; }
+gff() { git ls-files | grep "$@"; }
 
 # Outputs the name of the current branch
 # Usage example: git pull origin $(git_current_branch)
