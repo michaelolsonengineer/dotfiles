@@ -8,6 +8,10 @@ hooks=~/.dotfiles/git/hooks
 
 echo "Executing $hook_type hook(s)"
 
+if [ -n "$(git submodule | awk '{ print $2 }')" ]; then
+	git submodule update --init --recursive
+fi
+
 hooktypes=$(find $hooks -name "*.$hook_type")
 for hook in $hooktypes; do
 	echo ""

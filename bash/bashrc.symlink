@@ -140,10 +140,11 @@ export GROOVY_HOME=/opt/apache-groovy-2.5.8
 
 export M2_HOME=/usr/share/maven
 export M2=$M2_HOME/bin
-MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
-MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
-MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
-export MAVEN_OPTS
+# MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE "
+# MAVEN_OPTS+="-Xmx512M -XX:MaxPermSize=512M "
+# MAVEN_OPTS+="-Dexternal-config-location=classpath:empty_override.properties "
+# export MAVEN_OPTS
+export M2_REPO=$HOME/.m2/repository
 
 # Qt environment
 export QTVER=qt5

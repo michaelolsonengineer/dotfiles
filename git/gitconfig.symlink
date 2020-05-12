@@ -1,28 +1,34 @@
 # gitconfig
 [user]
-    name = Michael P Olson
-    email = molson35@ford.com
+	name = Michael P Olson
+	email = molson35@ford.com
 
 [github]
-    user = molson35
+	user = molson35
 
 [gitlab]
     user = michaelolsonengineer
 
 [credential]
-    helper = cache --timeout 3600
+	helper = cache --timeout 3600
 
 [init]
     templatedir = ~/.dotfiles/git/templates
 
-#[pager]
+[pager]
     # requires cloning diff-so-fancy from github
-    #diff = "diff-so-fancy | less --tabs=4 -RFX"
+    diff = diff-so-fancy | less --tabs=4 -RFX
     # show = "diff-so-fancy | less --tabs=4 -RFX"
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
 
 [alias]
     # list all aliases
-    la = "!git config -l | grep alias | cut -c 7-"
+    la = !git config -l | grep alias | cut -c 7-
 
     cnv = commit --no-verify
     ci = commit
@@ -43,34 +49,34 @@
     diff = diff --ignore-space-at-eol -b -w --ignore-blank-lines
     df = difftool
     dt = difftool
-    diffr = "!f() { git diff "$1"^.."$1"; }; f"
-    dr = "!f() { git dt "$1"^.."$1"; }; f"
+    diffr = "!f() { git diff $1^..$1; }; f"
+    dr = "!f() { git dt $1^..$1; }; f"
 
     # rebase commands
     cont = rebase --continue
-    conf = "!git s | grep ^U"
+    conf = !git s | grep ^U
 
     ### log commands ###
-    l       = "!sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\""
-    ls      = "!sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit               --date=short\""
-    ll      = "!sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --no-abbrev-commit --numstat\""
-    lsd     = log                              --decorate --abbrev-commit    --graph    --date=short     --all
-    hist    = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=short\""
-    histr   = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\""
-    histl   = "!sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --no-abbrev-commit --graph\""
-    histo   = log --oneline                    --decorate --abbrev-commit    --graph    --date=relative
+    l = !sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\"
+    ls = !sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit               --date=short\"
+    ll = !sh -c \"git --no-pager log --pretty=$GIT_LOG_FORMAT_STR --decorate --no-abbrev-commit --numstat\"
+    lsd = log                              --decorate --abbrev-commit    --graph    --date=short     --all
+    hist = !sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=short\"
+    histr = !sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --abbrev-commit    --graph    --date=relative\"
+    histl = !sh -c \"git log --pretty=$GIT_LOG_FORMAT_STR --decorate --no-abbrev-commit --graph\"
+    histo = log --oneline                    --decorate --abbrev-commit    --graph    --date=relative
     filelog = log --patch
-    fl      = log --patch
-    lstat   = log --stat
-    llast = "!git ll -1"
+    fl = log --patch
+    lstat = log --stat
+    llast = !git ll -1
     dlc = diff --cached HEAD^
-    lc = "!f() { git ll "${1:-HEAD}"^.."${1:-HEAD}"; }; f"
+    lc = "!f() { git ll ${1:-HEAD}^..${1:-HEAD}; }; f"
 
     # show what I did today
-    day = "!sh -c 'git log --reverse --no-merges --branches=* --date=local --after=\"yesterday 11:59PM\" --author=\"`git config --get user.name`\"'"
+    day = !sh -c 'git log --reverse --no-merges --branches=* --date=local --after=\"yesterday 11:59PM\" --author=\"`git config --get user.name`\"'
 
     # show the committers in the last 100 commits, sorted by who has commited the most
-    review = "!git log --no-merges --pretty=%an | head -n 100 | sort | uniq -c | sort -nr"
+    review = !git log --no-merges --pretty=%an | head -n 100 | sort | uniq -c | sort -nr
 
     # order files by number of commits, ascending
     # Written by Corey Haines
@@ -80,7 +86,7 @@
     churn = "!f() { git log --all -M -C --name-only --format='format:' \"$@\" | sort | grep -v '^$' | uniq -c | sort | awk 'BEGIN {print \"count\tfile\"} {print $1 \"\t\" $2}' | sort -g; }; f"
 
     # show all deleted files in the repo
-    deleted = "!git log --diff-filter=D --summary | grep delete"
+    deleted = !git log --diff-filter=D --summary | grep delete
 
     # create an empty commit
     empty = commit --allow-empty
@@ -91,8 +97,8 @@
     # submodule shortcuts
     si = submodule init
     su = submodule update
-    sub = "!git submodule sync && git submodule update"
-    up = "!git pull && git submodule update --init --recursive"
+    sub = !git submodule sync && git submodule update
+    up = !git pull && git submodule update --init --recursive
 
     # show number of commits per contributer, sorted
     count = shortlog -sn
@@ -100,9 +106,9 @@
     undo = reset --soft HEAD~1
     # undo = reset HEAD~1 --mixed
     amend = commit -a --amend
-    unpush = "!git push -f origin HEAD^:$(git rev-parse --abbrev-ref HEAD)"
+    unpush = !git push -f origin HEAD^:$(git rev-parse --abbrev-ref HEAD)
 
-    cleanup = "!git remote prune origin && git gc && git clean -df && git stash clear"
+    cleanup = !git remote prune origin && git gc && git clean -df && git stash clear
 
     # rebase the current branch with changes from upstream remote
     update = !git fetch upstream && git rebase upstream/`git rev-parse --abbrev-ref HEAD`
@@ -114,29 +120,29 @@
     # assume aliases
     hide = update-index --assume-unchanged
     unhide = update-index --no-assume-unchanged
-    hidden = "!git ls-files -v | grep ^h | cut -c 3-"
-    unhideall = "!git assumed | xargs git update-index --no-assume-unchanged"
+    hidden = !git ls-files -v | grep ^h | cut -c 3-
+    unhideall = !git assumed | xargs git update-index --no-assume-unchanged
 
     # clean up all
-    forget = "!git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
+    forget = !git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D
 
     # show the most recently touched branches
-    recent = "!git for-each-ref --sort='-committerdate' --format='%(color:red)%(refname)%(color:reset)%09%(committerdate)' refs/heads | sed -e 's-refs/heads/--' | less -XFR"
-    latest = "!git for-each-ref --sort='-committerdate' --format='%(color:red)%(refname)%(color:reset)%09%(committerdate)' refs/remotes | sed -e 's-refs/remotes/origin/--' | less -XFR"
+    recent = !git for-each-ref --sort='-committerdate' --format='%(color:red)%(refname)%(color:reset)%09%(committerdate)' refs/heads | sed -e 's-refs/heads/--' | less -XFR
+    latest = !git for-each-ref --sort='-committerdate' --format='%(color:red)%(refname)%(color:reset)%09%(committerdate)' refs/remotes | sed -e 's-refs/remotes/origin/--' | less -XFR
 
     ### grep commands ###
     # 'diff grep'
-    dg = "!sh -c 'git ls-files -m | grep $1 | xargs git diff' -"
+    dg = !sh -c 'git ls-files -m | grep $1 | xargs git diff' -
     # diff grep changes between two commits
-    dgc = "!sh -c 'git ls-files | grep $1 | xargs git diff $2 $3 -- ' -"
+    dgc = !sh -c 'git ls-files | grep $1 | xargs git diff $2 $3 -- ' -
     # 'checkout grep'
-    cg = "!sh -c 'git ls-files -m | grep $1 | xargs git checkout ' -"
+    cg = !sh -c 'git ls-files -m | grep $1 | xargs git checkout ' -
     # add grep
-    ag = "!sh -c 'git ls-files -m -o --exclude-standard | grep $1 | xargs git add --all' -"
+    ag = !sh -c 'git ls-files -m -o --exclude-standard | grep $1 | xargs git add --all' -
     # add all
     aa = !git ls-files -d | xargs git rm && git ls-files -m -o --exclude-standard | xargs git add
     # remove grep - Remove found files that are NOT under version control
-    rg = "!sh -c 'git ls-files --others --exclude-standard | grep $1 | xargs rm' -"
+    rg = !sh -c 'git ls-files --others --exclude-standard | grep $1 | xargs rm' -
 
     # Kaleidoscope commands
     dkal = difftool -y -t Kaleidoscope
@@ -149,13 +155,7 @@
 
     # git-svn
     spull = "!LAST_REV=`git svn find-rev $(git log --max-count 1 --pretty=format:%H))`; echo $LAST_REV; git-svn fetch -r$LAST_REV && git-svn rebase -l"
-    spush = "!git-svn dcommit"
-
-[filter "lfs"]
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    process = git-lfs filter-process
-    required = true
+    spush = !git-svn dcommit
 
 [color]
     diff = auto
@@ -196,13 +196,13 @@
     whitespace = nowarn
 
 [pack]
-     # Toggle if connecting to slow and large git network
-     threads = 1
-     deltaCacheSize = 256m
-     packSizeLimit = 256m
-     windowMemory = 256m
-     #END
-     # windowMemory = 1g
+     ## Toggle if connecting to slow and large git network
+     # threads = 1
+     # deltaCacheSize = 256m
+     # packSizeLimit = 256m
+     # windowMemory = 256m
+     ##END
+     windowMemory = 1g
 
 [core]
     pager = less -FXRS -x2
@@ -215,11 +215,11 @@
     ignorecase = false
     precomposeunicode = false
     excludesfile = ~/.gitignore_global
-    # Toggle if connecting to slow and large git network
-    compression = 0
-    packedGitLimit = 256m
-    packedGitWindowSize = 256m
-    #END
+    ## Toggle if connecting to slow and large git network
+    # compression = 0
+    # packedGitLimit = 256m
+    # packedGitWindowSize = 256m
+    ##END
 
 [rerere]
     enabled = true
@@ -260,13 +260,13 @@
     tool = meld
 
 [difftool "meld"]
-    cmd = meld "$LOCAL" "$REMOTE"
+    cmd = meld $LOCAL $REMOTE
     keepTemporaries = false
     trustExitCode = false
     keepBackup = false
 
 [difftool "p4merge"]
-    cmd = p4merge "$LOCAL" "$REMOTE"
+    cmd = p4merge $LOCAL $REMOTE
     keepTemporaries = false
     trustExitCode = false
     keepBackup = false
@@ -275,7 +275,7 @@
     cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 
 [merge]
-    keepBackup = false;
+    keepBackup = false ;
     tool = meld
     summary = true
 
@@ -284,13 +284,13 @@
     tool = meld
 
 [mergetool "meld"]
-    cmd = meld --auto-merge -L "LOCAL=${LOCAL##*/}" "$LOCAL" -L "MERGED=${MERGED##*/}" "$MERGED" -L "REMOTE=${REMOTE##*/}" "$REMOTE" --output "$MERGED"
+    cmd = "meld --auto-merge -L LOCAL=${LOCAL##*/} $LOCAL -L MERGED=${MERGED##*/} $MERGED -L REMOTE=${REMOTE##*/} $REMOTE --output $MERGED"
     keepTemporaries = false
     trustExitCode = false
     keepBackup = false
 
 [mergetool "p4merge"]
-    cmd = p4merge "$BASE" "$LOCAL" "$REMOTE" "$MERGED"
+    cmd = p4merge $BASE $LOCAL $REMOTE $MERGED
     keepTemporaries = false
     trustExitCode = false
     keepBackup = false
@@ -300,7 +300,7 @@
     trustexitcode = true
 
 [rebase]
-    instructionFormat = "[%an - %ar] %s"
+    instructionFormat = [%an - %ar] %s
 
 [gui]
     tabsize = 4
@@ -311,4 +311,5 @@
 [receive]
     denyCurrentBranch = updateInstead
 
-	
+[submodule]
+	recurse = true

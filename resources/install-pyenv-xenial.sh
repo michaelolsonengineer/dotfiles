@@ -30,7 +30,7 @@ if ! grep pyenv ~/.bashrc &>/dev/null; then
 fi
 
 
-cat <<EOT >> requirements.txt
+cat <<EOT > requirements.txt
 devpi-client
 setuptools_scm
 tox
