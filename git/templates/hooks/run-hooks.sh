@@ -12,15 +12,16 @@ for hook in $hooktypes; do
 	echo ""
 	echo "${COLOR_LIGHTPURPLE}Executing ${hook}${COLOR_NONE}"
 	
-	if [ -n "$(git submodule | awk '{ print $2 }')" -a -e "$repo/.gitmodules" ]; then
+	if [ -e "$repo/.gitmodules" && -n "$(git submodule | awk '{ print $2 }')" ]; then
 		for hk in "post-checkout post-merge"; do
 			if [ $hook_type=$hk ]; then
+				git submodule sync --recursive
 				git submodule update --init --recursive
 			fi
 		done
 	fi
 	
-	if command -v git-lfs >/dev/null 2>&1 && [ -e "$repo/.lfsconfig" ]; then
+	if [ -e "$repo/.lfsconfig" && command -v git-lfs >/dev/null 2>&1 ]; then
 		for hk in "pre-push post-checkout post-commit post-merge"; do
 			if [ $hook_type=$hk ]; then
 				git lfs $hook_type "$@"	echo >&2 "\nThis repository is configured for Git LFS but 'git-lfs' was not found on your path. If you no longer wish to use Git LFS, remove this hook by deleting .git/hooks/post-merge.\n"
