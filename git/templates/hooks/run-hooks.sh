@@ -16,7 +16,8 @@ recent_hooks=$(find $hook_dir -name "recent.$hook_type")
 submodule_hooks=$(find $hook_dir -name "submodule.$hook_type")
 lfs_hooks=$(find $hook_dir -name "lfs.$hook_type")
 
-echo "Executing $hook_type hook(s)"
+echo "Initiated by $hook_type hook"
+
 for recent_hook in $recent_hooks; do
 	echo ""
 	echo "${ps1_magenta}Executing ${recent_hook}${ps1_normal}"
