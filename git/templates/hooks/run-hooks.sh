@@ -21,13 +21,6 @@ lfs_hooks=$(find $hook_dir -name "lfs.$hook_type")
 echo "──────────────────────────────────────"
 echo "${ps1_cyan}Initiated by $hook_type hook${ps1_normal}"
 
-for recent_hook in $recent_hooks; do
-	echo "──────────────────────────────────────"
-	echo "${ps1_magenta}Executing ${recent_hook}${ps1_normal}"
-	$recent_hook
-	EXIT_CODE=$(($EXIT_CODE + $?))
-done
-
 if [ -e "$repo/.gitmodules" ]; then
 	for submodule_hook in $submodule_hooks; do
 		echo "──────────────────────────────────────"
@@ -45,6 +38,13 @@ if [ -e "$repo/.lfsconfig" ]; then
 		EXIT_CODE=$(($EXIT_CODE + $?))
 	done
 fi
+
+for recent_hook in $recent_hooks; do
+	echo "──────────────────────────────────────"
+	echo "${ps1_magenta}Executing ${recent_hook}${ps1_normal}"
+	$recent_hook
+	EXIT_CODE=$(($EXIT_CODE + $?))
+done
 
 echo "──────────────────────────────────────"
 
