@@ -154,8 +154,12 @@
     pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
 
     # git-svn
-    spull = "!LAST_REV=`git svn find-rev $(git log --max-count 1 --pretty=format:%H))`; echo $LAST_REV; git-svn fetch -r$LAST_REV && git-svn rebase -l"
-    spush = !git-svn dcommit
+    svpull = "!LAST_REV=`git svn find-rev $(git log --max-count 1 --pretty=format:%H))`; echo $LAST_REV; git-svn fetch -r$LAST_REV && git-svn rebase -l"
+    svpush = !git-svn dcommit
+
+    # git submodules
+	spull = !git pull && git submodule sync --recursive && git submodule update --init --recursive
+	spush = push --recurse-submodules=on-demand
 
 [color]
     diff = auto
@@ -254,6 +258,7 @@
     mnemonicprefix = true
     compactionHeuristic = true
     renameLimit = 999999
+	submodule = log
 
 [difftool]
     prompt = false
@@ -313,3 +318,6 @@
 
 [submodule]
 	recurse = true
+
+[status]
+	submoduleSummary = true
