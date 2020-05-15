@@ -12,11 +12,14 @@ ps1_normal=$(tput sgr0)
 repo=$( git rev-parse --show-toplevel )
 hook_type=$( basename $0 )
 hook_dir=~/.dotfiles/git/hooks
+
+# Filter which hook scripts to run by type i.e. post-checkout, post-merge, etc
 recent_hooks=$(find $hook_dir -name "recent.$hook_type")
 submodule_hooks=$(find $hook_dir -name "submodule.$hook_type")
 lfs_hooks=$(find $hook_dir -name "lfs.$hook_type")
 
-echo "Initiated by $hook_type hook"
+echo ""
+echo "${ps1_cyan}Initiated by $hook_type hook${ps1_normal}"
 
 for recent_hook in $recent_hooks; do
 	echo ""
