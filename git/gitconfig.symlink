@@ -1,10 +1,10 @@
 # gitconfig
 [user]
 	name = Michael P Olson
-	email = molson35@ford.com
+	email = michael.olson.engineer@outlook.com.com
 
 [github]
-	user = molson35
+	user = michaelolsonengineer
 
 [gitlab]
     user = michaelolsonengineer
@@ -240,7 +240,6 @@
     postBuffer = 134217728
     sslverify = false
     # maxRequestBuffer = 256m
-    proxy = http://internet.ford.com:83/
 
 [gitflow "branch"]
     master = master
